@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -120,7 +121,9 @@ public class TarjetaResource {
             return ResponseEntity.ok().headers(headers).body(page.getContent());
         }else{
             List<Tarjeta> list = tarjetaRepository.findByUserIsCurrentUser();
-            return ResponseEntity.ok().body(list);
+            Page<Tarjeta> page = new PageImpl<>(list);
+            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+            return ResponseEntity.ok().headers(headers).body(page.getContent());
         }
     }
 

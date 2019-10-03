@@ -12,7 +12,9 @@ import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -112,7 +114,9 @@ public class ClienteResource {
             return ResponseEntity.ok().headers(headers).body(page.getContent());
         }else{
             List<Cliente> list = clienteRepository.findByUserIsCurrentUser();
-            return ResponseEntity.ok().body(list);
+            Page<Cliente> page = new PageImpl<>(list);
+            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+            return ResponseEntity.ok().headers(headers).body(page.getContent());
         }
     }
 
