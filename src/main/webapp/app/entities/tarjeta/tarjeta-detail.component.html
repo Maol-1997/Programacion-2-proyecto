@@ -1,0 +1,41 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="tarjeta">
+            <h2><span jhiTranslate="principalApp.tarjeta.detail.title">Tarjeta</span> {{tarjeta.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="principalApp.tarjeta.ultDigitos">Ult Digitos</span></dt>
+                <dd>
+                    <span>{{tarjeta.ultDigitos}}</span>
+                </dd>
+                <dt><span jhiTranslate="principalApp.tarjeta.token">Token</span></dt>
+                <dd>
+                    <span>{{tarjeta.token}}</span>
+                </dd>
+                <dt><span jhiTranslate="principalApp.tarjeta.alta">Alta</span></dt>
+                <dd>
+                    <span>{{tarjeta.alta}}</span>
+                </dd>
+                <dt><span jhiTranslate="principalApp.tarjeta.cliente">Cliente</span></dt>
+                <dd>
+                    <div *ngIf="tarjeta.cliente">
+                        <a [routerLink]="['/cliente', tarjeta.cliente?.id, 'view']">{{tarjeta.cliente?.id}}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back"> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/tarjeta', tarjeta.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit"> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

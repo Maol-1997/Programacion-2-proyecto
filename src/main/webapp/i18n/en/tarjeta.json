@@ -1,0 +1,25 @@
+{
+  "principalApp": {
+    "tarjeta": {
+      "home": {
+        "title": "Tarjetas",
+        "createLabel": "Create a new Tarjeta",
+        "createOrEditLabel": "Create or edit a Tarjeta",
+        "notFound": "No Tarjetas found"
+      },
+      "created": "A new Tarjeta is created with identifier {{ param }}",
+      "updated": "A Tarjeta is updated with identifier {{ param }}",
+      "deleted": "A Tarjeta is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Tarjeta {{ id }}?"
+      },
+      "detail": {
+        "title": "Tarjeta"
+      },
+      "ultDigitos": "Ult Digitos",
+      "token": "Token",
+      "alta": "Alta",
+      "cliente": "Cliente"
+    }
+  }
+}

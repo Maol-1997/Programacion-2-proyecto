@@ -1,0 +1,68 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+            <h2 id="jhi-tarjeta-heading" jhiTranslate="principalApp.tarjeta.home.createOrEditLabel">Create or edit a Tarjeta</h2>
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+                <div class="form-group" [hidden]="!editForm.get('id').value">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id" formControlName="id"
+                        readonly />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="principalApp.tarjeta.ultDigitos" for="field_ultDigitos">Ult Digitos</label>
+                    <input type="number" class="form-control" name="ultDigitos" id="field_ultDigitos"
+                           formControlName="ultDigitos"/>
+                    <div *ngIf="editForm.get('ultDigitos').invalid && (editForm.get('ultDigitos').dirty || editForm.get('ultDigitos').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('ultDigitos').errors.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.get('ultDigitos')?.errors?.number" jhiTranslate="entity.validation.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="principalApp.tarjeta.token" for="field_token">Token</label>
+                    <input type="text" class="form-control" name="token" id="field_token"
+                           formControlName="token"/>
+                    <div *ngIf="editForm.get('token').invalid && (editForm.get('token').dirty || editForm.get('token').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('token').errors.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="principalApp.tarjeta.alta" for="field_alta">Alta</label>
+                    <input type="checkbox" class="form-control" name="alta" id="field_alta"
+                           formControlName="alta"/>
+                    <div *ngIf="editForm.get('alta').invalid && (editForm.get('alta').dirty || editForm.get('alta').touched)">
+                        <small class="form-text text-danger"
+                               *ngIf="editForm.get('alta').errors.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="principalApp.tarjeta.cliente" for="field_cliente">Cliente</label>
+                    <select class="form-control" id="field_cliente" name="cliente" formControlName="cliente">
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="clienteOption.id === editForm.get('cliente').value?.id ? editForm.get('cliente').value : clienteOption" *ngFor="let clienteOption of clientes; trackBy: trackClienteById">{{clienteOption.id}}</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+                <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
