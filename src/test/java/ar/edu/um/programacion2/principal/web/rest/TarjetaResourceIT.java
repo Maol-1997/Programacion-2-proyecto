@@ -2,7 +2,9 @@ package ar.edu.um.programacion2.principal.web.rest;
 
 import ar.edu.um.programacion2.principal.PrincipalApp;
 import ar.edu.um.programacion2.principal.domain.Tarjeta;
+import ar.edu.um.programacion2.principal.repository.ClienteRepository;
 import ar.edu.um.programacion2.principal.repository.TarjetaRepository;
+import ar.edu.um.programacion2.principal.repository.UserRepository;
 import ar.edu.um.programacion2.principal.web.rest.errors.ExceptionTranslator;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -47,6 +49,12 @@ public class TarjetaResourceIT {
     private TarjetaRepository tarjetaRepository;
 
     @Autowired
+    private ClienteRepository clienteRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -68,7 +76,7 @@ public class TarjetaResourceIT {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final TarjetaResource tarjetaResource = new TarjetaResource(tarjetaRepository);
+        final TarjetaResource tarjetaResource = new TarjetaResource(userRepository, clienteRepository, tarjetaRepository);
         this.restTarjetaMockMvc = MockMvcBuilders.standaloneSetup(tarjetaResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -218,7 +226,7 @@ public class TarjetaResourceIT {
             .andExpect(jsonPath("$.[*].token").value(hasItem(DEFAULT_TOKEN.toString())))
             .andExpect(jsonPath("$.[*].alta").value(hasItem(DEFAULT_ALTA.booleanValue())));
     }
-    
+
     @Test
     @Transactional
     public void getTarjeta() throws Exception {

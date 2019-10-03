@@ -1,7 +1,11 @@
 package ar.edu.um.programacion2.principal.web.rest;
 
 import ar.edu.um.programacion2.principal.domain.Tarjeta;
+import ar.edu.um.programacion2.principal.repository.ClienteRepository;
 import ar.edu.um.programacion2.principal.repository.TarjetaRepository;
+import ar.edu.um.programacion2.principal.repository.UserRepository;
+import ar.edu.um.programacion2.principal.security.AuthoritiesConstants;
+import ar.edu.um.programacion2.principal.security.SecurityUtils;
 import ar.edu.um.programacion2.principal.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -13,7 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,9 +42,13 @@ public class TarjetaResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final UserRepository userRepository;
+    private final ClienteRepository clienteRepository;
     private final TarjetaRepository tarjetaRepository;
 
-    public TarjetaResource(TarjetaRepository tarjetaRepository) {
+    public TarjetaResource(UserRepository userRepository, ClienteRepository clienteRepository, TarjetaRepository tarjetaRepository) {
+        this.userRepository = userRepository;
+        this.clienteRepository = clienteRepository;
         this.tarjetaRepository = tarjetaRepository;
     }
 
@@ -58,6 +65,10 @@ public class TarjetaResource {
         if (tarjeta.getId() != null) {
             throw new BadRequestAlertException("A new tarjeta cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
+        if(clienteRepository.findById(tarjeta.getCliente().getId()).get().getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId() || tarjeta.getCliente() == null)//seguridad
+            return ResponseEntity.badRequest().build();
+
         Tarjeta result = tarjetaRepository.save(tarjeta);
         return ResponseEntity.created(new URI("/api/tarjetas/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -79,6 +90,13 @@ public class TarjetaResource {
         if (tarjeta.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
+            if(clienteRepository.findById(tarjeta.getCliente().getId()).get().getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId() || tarjeta.getCliente() == null) //seguridad
+                throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
+            if(tarjeta.getCliente() == null)
+                throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "null cliente");
+
         Tarjeta result = tarjetaRepository.save(tarjeta);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, tarjeta.getId().toString()))
@@ -96,9 +114,14 @@ public class TarjetaResource {
     @GetMapping("/tarjetas")
     public ResponseEntity<List<Tarjeta>> getAllTarjetas(Pageable pageable) {
         log.debug("REST request to get a page of Tarjetas");
-        Page<Tarjeta> page = tarjetaRepository.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            Page<Tarjeta> page = tarjetaRepository.findAll(pageable);
+            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+            return ResponseEntity.ok().headers(headers).body(page.getContent());
+        }else{
+            List<Tarjeta> list = tarjetaRepository.findByUserIsCurrentUser();
+            return ResponseEntity.ok().body(list);
+        }
     }
 
     /**
@@ -110,6 +133,9 @@ public class TarjetaResource {
     @GetMapping("/tarjetas/{id}")
     public ResponseEntity<Tarjeta> getTarjeta(@PathVariable Long id) {
         log.debug("REST request to get Tarjeta : {}", id);
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
+            if(tarjetaRepository.findById(id).get().getCliente().getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) //seguridad
+                throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
         Optional<Tarjeta> tarjeta = tarjetaRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(tarjeta);
     }
@@ -123,6 +149,9 @@ public class TarjetaResource {
     @DeleteMapping("/tarjetas/{id}")
     public ResponseEntity<Void> deleteTarjeta(@PathVariable Long id) {
         log.debug("REST request to delete Tarjeta : {}", id);
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
+            if(tarjetaRepository.findById(id).get().getCliente().getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) //seguridad
+                throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
         tarjetaRepository.deleteById(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }

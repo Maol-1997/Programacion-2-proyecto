@@ -3,6 +3,7 @@ package ar.edu.um.programacion2.principal.web.rest;
 import ar.edu.um.programacion2.principal.domain.Cliente;
 import ar.edu.um.programacion2.principal.repository.ClienteRepository;
 import ar.edu.um.programacion2.principal.repository.UserRepository;
+import ar.edu.um.programacion2.principal.security.AuthoritiesConstants;
 import ar.edu.um.programacion2.principal.security.SecurityUtils;
 import ar.edu.um.programacion2.principal.web.rest.errors.BadRequestAlertException;
 import io.github.jhipster.web.util.HeaderUtil;
@@ -14,11 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -60,9 +57,8 @@ public class ClienteResource {
         if (cliente.getId() != null) {
             throw new BadRequestAlertException("A new cliente cannot already have an ID", ENTITY_NAME, "idexists");
         }
-
-        if(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId() != cliente.getUser().getId())
-            return new ResponseEntity<Cliente>(HttpStatus.BAD_REQUEST);
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN) || cliente.getUser() == null)
+        cliente.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get()); // seguridad
 
         Cliente result = clienteRepository.save(cliente);
         return ResponseEntity.created(new URI("/api/clientes/" + result.getId()))
@@ -72,19 +68,6 @@ public class ClienteResource {
         //} else
         //    return ResponseEntity.badRequest().build();
 
-    }
-
-    public String getCurrentUserLogin() {
-        org.springframework.security.core.context.SecurityContext securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        String login = null;
-        if (authentication != null)
-            if (authentication.getPrincipal() instanceof UserDetails)
-                login = ((UserDetails) authentication.getPrincipal()).getUsername();
-            else if (authentication.getPrincipal() instanceof String)
-                login = (String) authentication.getPrincipal();
-
-        return login;
     }
 
 
@@ -103,6 +86,11 @@ public class ClienteResource {
         if (cliente.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
+        if(cliente.getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) //seguridad
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
+
+
         Cliente result = clienteRepository.save(cliente);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, cliente.getId().toString()))
@@ -118,9 +106,14 @@ public class ClienteResource {
     @GetMapping("/clientes")
     public ResponseEntity<List<Cliente>> getAllClientes(Pageable pageable) {
         log.debug("REST request to get a page of Clientes");
-        Page<Cliente> page = clienteRepository.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        if (SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            Page<Cliente> page = clienteRepository.findAll(pageable);
+            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+            return ResponseEntity.ok().headers(headers).body(page.getContent());
+        }else{
+            List<Cliente> list = clienteRepository.findByUserIsCurrentUser();
+            return ResponseEntity.ok().body(list);
+        }
     }
 
     /**
@@ -132,8 +125,11 @@ public class ClienteResource {
     @GetMapping("/clientes/{id}")
     public ResponseEntity<Cliente> getCliente(@PathVariable Long id) {
         log.debug("REST request to get Cliente : {}", id);
-        Optional<Cliente> cliente = clienteRepository.findById(id);
-        return ResponseUtil.wrapOrNotFound(cliente);
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
+        if(clienteRepository.findById(id).get().getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
+        throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
+            Optional<Cliente> cliente = clienteRepository.findById(id);
+            return ResponseUtil.wrapOrNotFound(cliente);
     }
 
     /**
@@ -145,6 +141,10 @@ public class ClienteResource {
     @DeleteMapping("/clientes/{id}")
     public ResponseEntity<Void> deleteCliente(@PathVariable Long id) {
         log.debug("REST request to delete Cliente : {}", id);
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
+            if (clienteRepository.findById(id).get().getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
+                throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
+
         clienteRepository.deleteById(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
