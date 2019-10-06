@@ -1,0 +1,22 @@
+entity Cliente {
+	nombre String,
+	apellido String
+
+}
+entity Tarjeta{
+	ultDigitos Integer required,
+	token String required,
+	alta Boolean required
+}
+
+relationship OneToMany {
+	Cliente{Tarjeta} to Tarjeta{Cliente}
+}
+
+relationship ManyToOne {
+  Cliente{User(login)} to User
+}
+
+
+paginate Cliente, Tarjeta with pagination
+paginate Tarjeta with infinite-scroll
