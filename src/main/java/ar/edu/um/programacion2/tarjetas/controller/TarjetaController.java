@@ -1,10 +1,10 @@
 /**
  * 
  */
-package ar.edu.um.programacion2.primerproyecto.controller;
+package ar.edu.um.programacion2.tarjetas.controller;
 
-import ar.edu.um.programacion2.primerproyecto.model.Tarjeta;
-import ar.edu.um.programacion2.primerproyecto.service.TarjetaService;
+import ar.edu.um.programacion2.tarjetas.model.Tarjeta;
+import ar.edu.um.programacion2.tarjetas.service.TarjetaService;
 import com.google.common.hash.Hashing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;

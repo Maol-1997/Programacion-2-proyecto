@@ -1,7 +1,7 @@
 /**
  *
  */
-package ar.edu.um.programacion2.primerproyecto.service;
+package ar.edu.um.programacion2.tarjetas.service;
 
 import ar.edu.um.programacion2.primerproyecto.Repository.ITarjetaRepository;
 import ar.edu.um.programacion2.primerproyecto.exceptions.TarjetaNotFoundException;

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package ar.edu.um.programacion2.primerproyecto.model;
+package ar.edu.um.programacion2.tarjetas.model;
 
 import lombok.Data;
 

@@ -1,11 +1,11 @@
-package ar.edu.um.programacion2.primerproyecto;
+package ar.edu.um.programacion2.tarjetas;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class PrimerproyectoApplication {
+public class TarjetasApplication {
     public static void main(String[] args) {
-        SpringApplication.run(PrimerproyectoApplication.class, args);
+        SpringApplication.run(TarjetasApplication.class, args);
     }
 }
