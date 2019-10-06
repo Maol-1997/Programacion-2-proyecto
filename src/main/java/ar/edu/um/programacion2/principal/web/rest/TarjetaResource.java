@@ -10,11 +10,20 @@ import ar.edu.um.programacion2.principal.web.rest.errors.BadRequestAlertExceptio
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -24,10 +33,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -81,31 +87,41 @@ public class TarjetaResource {
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
-
-    @PostMapping("/tarjeta/añadir")
-    public ResponseEntity<Tarjeta> añadirTarjeta(@Valid @RequestBody JSONObject json) throws IOException, URISyntaxException, JSONException {
+    /**
+     * {@code POST  /tarjetas} : Create a new tarjeta.
+     *
+     * @param tarjetajson the tarjeta to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new tarjeta, or with status {@code 400 (Bad Request)} if the tarjeta has already an ID.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PostMapping("/tarjeta")
+    public ResponseEntity<Tarjeta> añadirTarjeta(@RequestBody String tarjetajson) throws IOException, URISyntaxException, ParseException {
+        JSONParser parser = new JSONParser();
+        JSONObject json = (JSONObject) parser.parse(tarjetajson);
         log.debug("REST request to add Tarjeta : {}", json);
+
         if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
-            if (clienteRepository.findById(Long.valueOf(json.getString("cliente_id"))).get().getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
+            if (clienteRepository.findById(Long.valueOf(json.get("cliente_id").toString())).get().getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
                 return ResponseEntity.badRequest().build();
-            if (json.getString("nombre") == null || json.getString("apellido") == null || json.getString("vencimiento") == null || json.getString("numero") == null || json.getString("seguridad") == null || json.getString("cliente_id") == null)
+            if (json.get("nombre").toString() == null || json.get("apellido").toString() == null || json.get("vencimiento").toString() == null || json.get("numero").toString() == null || json.get("seguridad").toString() == null || json.get("cliente_id").toString() == null)
                 return ResponseEntity.badRequest().build();
         }
 
-        String ult4 = json.getString("numero").substring(json.getString("numero").length() - 4);
+        String ult4 = json.get("numero").toString().substring(json.get("numero").toString().length() - 4);
         String jsonInputString =
-                "{\"nombre\": \"" + json.getString("nombre") + "\"," +
-                "\"apellido\": \"" + json.getString("apellido") + "\"," +
-                "\"vencimiento\": \"" + json.getString("vencimiento") + "\"," +
-                "\"numero\": \"" + json.getString("numero") + "\"," +
-                "\"seguridad\": \"" + json.getString("seguridad") + "\"}";
+                "{\"nombre\": \"" + json.get("nombre").toString() + "\"," +
+                "\"apellido\": \"" + json.get("apellido").toString() + "\"," +
+                "\"vencimiento\": " + json.get("vencimiento").toString() + "," +
+                "\"numero\": " + json.get("numero").toString() + "," +
+                "\"seguridad\": \"" + json.get("seguridad").toString() + "\"," +
+                "\"limite\": "+json.get("limite").toString()+"}";
 
         String token = sendPostTarjeta(jsonInputString);
         Tarjeta tarjeta = new Tarjeta();
         tarjeta.setToken(token);
         tarjeta.setAlta(true);
         tarjeta.setUltDigitos(Integer.valueOf(ult4));
-        tarjeta.setCliente(clienteRepository.findById(Long.valueOf(json.getString("cliente_id"))).get());
+        tarjeta.setCliente(clienteRepository.findById(Long.valueOf(json.get("cliente_id").toString())).get());
         Tarjeta result = tarjetaRepository.save(tarjeta);
 
         return ResponseEntity.created(new URI("/api/tarjetas/" + result.getId()))
@@ -113,31 +129,19 @@ public class TarjetaResource {
             .body(result);
     }
 
-    private String sendPostTarjeta(String json) throws IOException {
-        String url;
-        url = "http://localhost:8081/tarjeta/";
-        System.out.println(url);
-        URL obj = new URL(url);
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+    private String sendPostTarjeta(String payload) throws IOException {
 
-        con.setRequestMethod("POST");
-        con.setRequestProperty("Accept", "application/json");
-        con.setRequestProperty("Content-Type", "application/json; utf-8");
-        con.setDoOutput(true);
+        StringEntity entity = new StringEntity(payload,
+            ContentType.APPLICATION_JSON);
 
-        try (OutputStream os = con.getOutputStream()) {
-            byte[] input = json.getBytes("utf-8");
-            os.write(input, 0, input.length);
-        } // envia el json
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpPost request = new HttpPost("http://127.0.0.1:8081/tarjeta/");
+        request.setEntity(entity);
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"))) {
-            StringBuilder response = new StringBuilder();
-            String responseLine = null;
-            while ((responseLine = br.readLine()) != null) {
-                response.append(responseLine.trim());
-            }
-            return response.toString();
-        }
+        HttpResponse response = httpClient.execute(request);
+        System.out.println(response.getStatusLine().getStatusCode());
+        System.out.println(payload);
+        return EntityUtils.toString(response.getEntity(), "UTF-8");
     }
 
     /**
