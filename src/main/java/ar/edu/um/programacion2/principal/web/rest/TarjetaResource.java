@@ -82,10 +82,9 @@ public class TarjetaResource {
             .body(result);
     }
 
-    @PostMapping("/tarjetas/añadir")
-    public ResponseEntity<Tarjeta> añadirTarjeta(@Valid @RequestBody JSONObject json) throws JSONException, IOException, URISyntaxException {
+    @PostMapping("/tarjeta/añadir")
+    public ResponseEntity<Tarjeta> añadirTarjeta(@Valid @RequestBody JSONObject json) throws IOException, URISyntaxException, JSONException {
         log.debug("REST request to add Tarjeta : {}", json);
-
         if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             if (clienteRepository.findById(Long.valueOf(json.getString("cliente_id"))).get().getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
                 return ResponseEntity.badRequest().build();
@@ -116,7 +115,7 @@ public class TarjetaResource {
 
     private String sendPostTarjeta(String json) throws IOException {
         String url;
-        url = "http://localhost:8081/tarjeta/creartoken";
+        url = "http://localhost:8081/tarjeta/";
         System.out.println(url);
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
