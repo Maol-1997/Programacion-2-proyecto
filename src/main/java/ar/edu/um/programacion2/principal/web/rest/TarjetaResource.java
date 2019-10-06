@@ -139,8 +139,6 @@ public class TarjetaResource {
         request.setEntity(entity);
 
         HttpResponse response = httpClient.execute(request);
-        System.out.println(response.getStatusLine().getStatusCode());
-        System.out.println(payload);
         return EntityUtils.toString(response.getEntity(), "UTF-8");
     }
 
