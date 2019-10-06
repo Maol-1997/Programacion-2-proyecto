@@ -35,7 +35,7 @@ public class TarjetaController {
 		return new ResponseEntity<Tarjeta>(service.findById(tarjetaId), HttpStatus.OK);
 	}
 	@PostMapping("/")
-	public String add(@RequestBody String json) throws ParseException {
+	public ResponseEntity<String> add(@RequestBody String json) throws ParseException {
 		System.out.println(json);
 		JSONParser parser = new JSONParser();
 		JSONObject tarjetafull = (JSONObject) parser.parse(json);
@@ -46,7 +46,7 @@ public class TarjetaController {
 		tarjeta.setLimite(Integer.valueOf(tarjetafull.get("limite").toString()));
 		tarjeta.setToken(token);
 		service.add(tarjeta);
-		return token;
+		return new ResponseEntity<String>(token,HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{tarjetaId}")
