@@ -14,9 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Random;
 
 
 @RestController
@@ -36,17 +36,30 @@ public class TarjetaController {
 	}
 	@PostMapping("/")
 	public ResponseEntity<String> add(@RequestBody String json) throws ParseException {
-		System.out.println(json);
 		JSONParser parser = new JSONParser();
 		JSONObject tarjetafull = (JSONObject) parser.parse(json);
 		String token = tarjetafull.get("nombre").toString() +tarjetafull.get("apellido").toString()+tarjetafull.get("vencimiento").toString()+tarjetafull.get("numero").toString()+tarjetafull.get("seguridad").toString();
 		token = Hashing.sha256().hashString(token, StandardCharsets.UTF_8).toString();
 		Tarjeta tarjeta = new Tarjeta();
-		System.out.println(tarjetafull.get("limite").toString());
 		tarjeta.setLimite(Integer.valueOf(tarjetafull.get("limite").toString()));
 		tarjeta.setToken(token);
 		service.add(tarjeta);
 		return new ResponseEntity<String>(token,HttpStatus.OK);
+	}
+
+	@PostMapping("/comprar")
+	public ResponseEntity<String> comprar(@RequestBody String info) throws ParseException {
+		JSONParser parser = new JSONParser();
+		JSONObject infojson = (JSONObject) parser.parse(info);
+		Tarjeta tarjeta = service.findByToken(infojson.get("token").toString());
+		if(tarjeta == null)
+			return new ResponseEntity<String>("Error, la tarjeta no existe en la DB",HttpStatus.NOT_FOUND);
+		if(tarjeta.getLimite() < Integer.valueOf(infojson.get("monto").toString()))
+			return new ResponseEntity<String>("La compra excede el limite de la tarjeta",HttpStatus.UNAUTHORIZED);
+		Random r = new Random();
+		if((r.nextInt((10 - 1) + 1) + 1) == 5 || (r.nextInt((10 - 1) + 1) + 1) == 6) //20% chances de saldo insuficiente
+			return new ResponseEntity<String>("Saldo insuficiente",HttpStatus.UNAUTHORIZED);
+		return new ResponseEntity<String>("Operacion realizada con exito",HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{tarjetaId}")

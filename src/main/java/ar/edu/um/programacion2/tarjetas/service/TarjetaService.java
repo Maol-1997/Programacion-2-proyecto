@@ -46,4 +46,11 @@ public class TarjetaService {
             return repository.save(tarjeta);
         }).orElseThrow(() -> new TarjetaNotFoundException(tarjetaId));
     }
+
+    public Tarjeta findByToken(String token) {
+        Tarjeta tarjeta = repository.findByToken(token);
+        if(tarjeta == null)
+            return null;
+        return tarjeta;
+    }
 }

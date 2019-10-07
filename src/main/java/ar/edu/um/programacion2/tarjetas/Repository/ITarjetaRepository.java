@@ -10,4 +10,5 @@ import ar.edu.um.programacion2.tarjetas.model.Tarjeta;
 
 @Repository
 public interface ITarjetaRepository extends JpaRepository<Tarjeta, Long> {
+    public Tarjeta findByToken(String token);
 }
