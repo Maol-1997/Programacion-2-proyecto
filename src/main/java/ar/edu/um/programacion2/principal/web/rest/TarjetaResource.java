@@ -28,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -116,7 +117,7 @@ public class TarjetaResource {
                 "\"seguridad\": \"" + json.get("seguridad").toString() + "\"," +
                 "\"limite\": "+json.get("limite").toString()+"}";
 
-        String token = sendPostTarjeta(jsonInputString);
+        String token = postAñadirTarjeta(jsonInputString);
         Tarjeta tarjeta = new Tarjeta();
         tarjeta.setToken(token);
         tarjeta.setAlta(true);
@@ -128,14 +129,38 @@ public class TarjetaResource {
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
-
-    private String sendPostTarjeta(String payload) throws IOException {
+    private String postAñadirTarjeta(String payload) throws IOException {
 
         StringEntity entity = new StringEntity(payload,
             ContentType.APPLICATION_JSON);
 
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpPost request = new HttpPost("http://127.0.0.1:8081/tarjeta/");
+        request.setEntity(entity);
+
+        HttpResponse response = httpClient.execute(request);
+        return EntityUtils.toString(response.getEntity(), "UTF-8");
+    }
+
+    @PostMapping("/comprar")
+    public ResponseEntity<String> comprar(@RequestBody String info) throws IOException, ParseException {
+        JSONParser parser = new JSONParser();
+        JSONObject json = (JSONObject) parser.parse(info);
+        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            if(json.get("token").toString() == null || json.get("monto").toString() == null)
+                return ResponseEntity.badRequest().build();
+            if(tarjetaRepository.findByToken(json.get("token").toString()).getCliente().getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId())
+                return ResponseEntity.badRequest().build();
+        }
+        return new ResponseEntity<String>(postCompraConTarjeta(info),HttpStatus.OK);
+    }
+
+    private String postCompraConTarjeta(String payload) throws IOException {
+        StringEntity entity = new StringEntity(payload,
+            ContentType.TEXT_PLAIN);
+
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpPost request = new HttpPost("http://127.0.0.1:8081/tarjeta/comprar");
         request.setEntity(entity);
 
         HttpResponse response = httpClient.execute(request);

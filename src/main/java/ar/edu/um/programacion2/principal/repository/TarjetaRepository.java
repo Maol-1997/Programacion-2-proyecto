@@ -14,4 +14,6 @@ import java.util.List;
 public interface TarjetaRepository extends JpaRepository<Tarjeta, Long> {
     @Query("select tarjeta from Tarjeta tarjeta where tarjeta.cliente.user.login = ?#{principal.username}")
     List<Tarjeta> findByUserIsCurrentUser();
+
+    Tarjeta findByToken(String token);
 }
