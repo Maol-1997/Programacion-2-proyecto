@@ -112,7 +112,7 @@ public class TarjetaResource {
         String jsonInputString =
                 "{\"nombre\": \"" + json.get("nombre").toString() + "\"," +
                 "\"apellido\": \"" + json.get("apellido").toString() + "\"," +
-                "\"vencimiento\": " + json.get("vencimiento").toString() + "," +
+                "\"vencimiento\": \"" + json.get("vencimiento").toString() + "\"," +
                 "\"numero\": " + json.get("numero").toString() + "," +
                 "\"seguridad\": \"" + json.get("seguridad").toString() + "\"," +
                 "\"limite\": "+json.get("limite").toString()+"}";
