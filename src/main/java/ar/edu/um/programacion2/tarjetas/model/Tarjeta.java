@@ -31,4 +31,8 @@ public class Tarjeta implements Serializable {
 	@NotNull
 	private int limite;
 
+	@Column(name = "expira")
+	@NotNull
+	private String expira;
+
 }

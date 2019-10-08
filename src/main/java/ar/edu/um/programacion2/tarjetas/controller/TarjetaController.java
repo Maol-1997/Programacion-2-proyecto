@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
 
@@ -43,6 +44,7 @@ public class TarjetaController {
 		Tarjeta tarjeta = new Tarjeta();
 		tarjeta.setLimite(Integer.valueOf(tarjetafull.get("limite").toString()));
 		tarjeta.setToken(token);
+		tarjeta.setExpira(tarjetafull.get("vencimiento").toString());
 		service.add(tarjeta);
 		return new ResponseEntity<String>(token,HttpStatus.OK);
 	}
@@ -56,6 +58,12 @@ public class TarjetaController {
 			return new ResponseEntity<String>("Error, la tarjeta no existe en la DB",HttpStatus.NOT_FOUND);
 		if(tarjeta.getLimite() < Integer.valueOf(infojson.get("monto").toString()))
 			return new ResponseEntity<String>("La compra excede el limite de la tarjeta",HttpStatus.UNAUTHORIZED);
+
+		LocalDate today = LocalDate.now();
+		String [] expira = tarjeta.getExpira().split("/");
+		if((today.getMonthValue() > Integer.valueOf(expira[0]) && today.getYear() >= Integer.valueOf(expira[1])))
+			return new ResponseEntity<String>("Tarjeta expirada",HttpStatus.UNAUTHORIZED);
+
 		Random r = new Random();
 		if((r.nextInt((10 - 1) + 1) + 1) == 5 || (r.nextInt((10 - 1) + 1) + 1) == 6) //20% chances de saldo insuficiente
 			return new ResponseEntity<String>("Saldo insuficiente",HttpStatus.UNAUTHORIZED);
