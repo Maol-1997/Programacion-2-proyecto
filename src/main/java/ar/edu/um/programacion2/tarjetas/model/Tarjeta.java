@@ -23,7 +23,7 @@ public class Tarjeta implements Serializable {
 	@Column(name = "tarjetaId")
 	private Long id;
 
-	@Column(name = "token")
+	@Column(name = "token", unique = true)
 	@NotNull
 	private String token;
 

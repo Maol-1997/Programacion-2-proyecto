@@ -4,10 +4,10 @@
 package ar.edu.um.programacion2.tarjetas.controller;
 
 import ar.edu.um.programacion2.tarjetas.model.Tarjeta;
+import ar.edu.um.programacion2.tarjetas.model.TarjetaAddDTO;
+import ar.edu.um.programacion2.tarjetas.model.TarjetaDTO;
 import ar.edu.um.programacion2.tarjetas.service.TarjetaService;
 import com.google.common.hash.Hashing;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,27 +36,23 @@ public class TarjetaController {
 		return new ResponseEntity<Tarjeta>(service.findById(tarjetaId), HttpStatus.OK);
 	}
 	@PostMapping("/")
-	public ResponseEntity<String> add(@RequestBody String json) throws ParseException {
-		JSONParser parser = new JSONParser();
-		JSONObject tarjetafull = (JSONObject) parser.parse(json);
-		String token = tarjetafull.get("nombre").toString() +tarjetafull.get("apellido").toString()+tarjetafull.get("vencimiento").toString()+tarjetafull.get("numero").toString()+tarjetafull.get("seguridad").toString();
+	public ResponseEntity<String> add(@RequestBody TarjetaAddDTO tarjetaAddDTO) {
+		String token = tarjetaAddDTO.getNombre() + tarjetaAddDTO.getApellido() + tarjetaAddDTO.getVencimiento() + tarjetaAddDTO.getNumero() + tarjetaAddDTO.getSeguridad() + System.currentTimeMillis();
 		token = Hashing.sha256().hashString(token, StandardCharsets.UTF_8).toString();
 		Tarjeta tarjeta = new Tarjeta();
-		tarjeta.setLimite(Integer.valueOf(tarjetafull.get("limite").toString()));
+		tarjeta.setLimite(tarjetaAddDTO.getLimite());
 		tarjeta.setToken(token);
-		tarjeta.setExpira(tarjetafull.get("vencimiento").toString());
+		tarjeta.setExpira(tarjetaAddDTO.getVencimiento());
 		service.add(tarjeta);
 		return new ResponseEntity<String>(token,HttpStatus.OK);
 	}
 
 	@PostMapping("/comprar")
-	public ResponseEntity<String> comprar(@RequestBody String info) throws ParseException {
-		JSONParser parser = new JSONParser();
-		JSONObject infojson = (JSONObject) parser.parse(info);
-		Tarjeta tarjeta = service.findByToken(infojson.get("token").toString());
+	public ResponseEntity<String> comprar(@RequestBody TarjetaDTO tarjetaDTO) {
+		Tarjeta tarjeta = service.findByToken(tarjetaDTO.getToken());
 		if(tarjeta == null)
 			return new ResponseEntity<String>("Error, la tarjeta no existe en la DB",HttpStatus.NOT_FOUND);
-		if(tarjeta.getLimite() < Integer.valueOf(infojson.get("monto").toString()))
+		if(tarjeta.getLimite() < Integer.valueOf(tarjetaDTO.getMonto()))
 			return new ResponseEntity<String>("La compra excede el limite de la tarjeta",HttpStatus.UNAUTHORIZED);
 
 		LocalDate today = LocalDate.now();
@@ -76,13 +72,11 @@ public class TarjetaController {
 	}
 
 	@PutMapping("{tarjetaId}")
-	public ResponseEntity<Tarjeta> update(@RequestBody String json, @PathVariable Long tarjetaId) throws ParseException {
-		JSONParser parser = new JSONParser();
-		JSONObject tarjetafull = (JSONObject) parser.parse(json);
-		String token = tarjetafull.get("nombre").toString()+tarjetafull.get("apellido").toString()+tarjetafull.get("vencimiento").toString()+tarjetafull.get("numero").toString()+tarjetafull.get("seguridad").toString();
-		token = Hashing.sha256().hashString(token, StandardCharsets.UTF_8).toString();
+	public ResponseEntity<Tarjeta> update(@RequestBody TarjetaAddDTO tarjetaAddDTO, @PathVariable Long tarjetaId) throws ParseException {
+        String token = tarjetaAddDTO.getNombre() + tarjetaAddDTO.getApellido() + tarjetaAddDTO.getVencimiento() + tarjetaAddDTO.getNumero() + tarjetaAddDTO.getSeguridad() + System.currentTimeMillis();
+        token = Hashing.sha256().hashString(token, StandardCharsets.UTF_8).toString();
 		Tarjeta tarjeta = new Tarjeta();
-		tarjeta.setLimite(Integer.valueOf(tarjetafull.get("limite").toString()));
+		tarjeta.setLimite(tarjetaAddDTO.getLimite());
 		tarjeta.setToken(token);
 		return new ResponseEntity<Tarjeta>(service.update(tarjeta, tarjetaId), HttpStatus.OK);
 	}
