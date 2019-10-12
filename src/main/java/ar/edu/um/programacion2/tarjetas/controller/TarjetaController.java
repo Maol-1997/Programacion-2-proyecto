@@ -32,7 +32,7 @@ public class TarjetaController {
 	}
 
 	@GetMapping("/{tarjetaId}")
-	public ResponseEntity<Tarjeta> FindById(@PathVariable Long tarjetaId) {
+	public ResponseEntity<Tarjeta> findById(@PathVariable Long tarjetaId) {
 		return new ResponseEntity<Tarjeta>(service.findById(tarjetaId), HttpStatus.OK);
 	}
 	@PostMapping("/")
@@ -72,7 +72,7 @@ public class TarjetaController {
 	}
 
 	@PutMapping("{tarjetaId}")
-	public ResponseEntity<Tarjeta> update(@RequestBody TarjetaAddDTO tarjetaAddDTO, @PathVariable Long tarjetaId) throws ParseException {
+	public ResponseEntity<Tarjeta> update(@RequestBody TarjetaAddDTO tarjetaAddDTO, @PathVariable Long tarjetaId) {
         String token = tarjetaAddDTO.getNombre() + tarjetaAddDTO.getApellido() + tarjetaAddDTO.getVencimiento() + tarjetaAddDTO.getNumero() + tarjetaAddDTO.getSeguridad() + System.currentTimeMillis();
         token = Hashing.sha256().hashString(token, StandardCharsets.UTF_8).toString();
 		Tarjeta tarjeta = new Tarjeta();
