@@ -5,22 +5,19 @@ import ar.edu.um.programacion2.principal.repository.ClienteRepository;
 import ar.edu.um.programacion2.principal.repository.UserRepository;
 import ar.edu.um.programacion2.principal.security.AuthoritiesConstants;
 import ar.edu.um.programacion2.principal.security.SecurityUtils;
+import ar.edu.um.programacion2.principal.service.dto.ClienteDTO;
 import ar.edu.um.programacion2.principal.web.rest.errors.BadRequestAlertException;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.support.PagedListHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -73,15 +70,13 @@ public class ClienteResource {
 
     }
     @PostMapping("/cliente")
-    public ResponseEntity<Cliente> crearCliente(@RequestBody String clientejson) throws ParseException, URISyntaxException {
-        JSONParser parser = new JSONParser();
-        JSONObject json = (JSONObject) parser.parse(clientejson);
-        if(json.get("nombre") == null || json.get("apellido") == null)
+    public ResponseEntity<Cliente> crearCliente(@RequestBody ClienteDTO clienteDTO) throws ParseException, URISyntaxException {
+        if(clienteDTO.getNombre() == null || clienteDTO.getApellido() == null)
             throw new BadRequestAlertException("falta nombre y/o apellido", ENTITY_NAME, "missing parameters");
         Cliente cliente = new Cliente();
         cliente.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get());
-        cliente.setNombre(json.get("nombre").toString());
-        cliente.setApellido(json.get("apellido").toString());
+        cliente.setNombre(clienteDTO.getNombre());
+        cliente.setApellido(clienteDTO.getApellido());
         Cliente result = clienteRepository.save(cliente);
         return ResponseEntity.created(new URI("/api/clientes/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))

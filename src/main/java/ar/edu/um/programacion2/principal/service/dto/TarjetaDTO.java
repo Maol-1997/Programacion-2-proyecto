@@ -1,8 +1,16 @@
-package ar.edu.um.programacion2.principal.domain;
+package ar.edu.um.programacion2.principal.service.dto;
 
 public class TarjetaDTO {
-    String token;
-    Integer monto;
+    private String token;
+    private Integer monto;
+
+    public TarjetaDTO() {
+    }
+
+    public TarjetaDTO(String token, Integer monto) {
+        this.token = token;
+        this.monto = monto;
+    }
 
     public String getToken() {
         return token;

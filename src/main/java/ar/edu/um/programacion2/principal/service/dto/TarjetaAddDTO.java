@@ -1,13 +1,25 @@
-package ar.edu.um.programacion2.principal.domain;
+package ar.edu.um.programacion2.principal.service.dto;
 
 public class TarjetaAddDTO {
-    String nombre;
-    String apellido;
-    Integer seguridad;
-    Long numero;
-    Integer limite;
-    String vencimiento;
-    Long cliente_id;
+    private String nombre;
+    private String apellido;
+    private Integer seguridad;
+    private Long numero;
+    private Integer limite;
+    private String vencimiento;
+    private Long cliente_id;
+
+    public TarjetaAddDTO(){}
+
+    public TarjetaAddDTO(String nombre, String apellido, Integer seguridad, Long numero, Integer limite, String vencimiento, Long cliente_id) {
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.seguridad = seguridad;
+        this.numero = numero;
+        this.limite = limite;
+        this.vencimiento = vencimiento;
+        this.cliente_id = cliente_id;
+    }
 
     public String getNombre() {
         return nombre;

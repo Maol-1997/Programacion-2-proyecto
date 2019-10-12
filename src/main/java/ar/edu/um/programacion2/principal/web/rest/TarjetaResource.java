@@ -1,24 +1,18 @@
 package ar.edu.um.programacion2.principal.web.rest;
 
 import ar.edu.um.programacion2.principal.domain.Tarjeta;
-import ar.edu.um.programacion2.principal.domain.TarjetaAddDTO;
-import ar.edu.um.programacion2.principal.domain.TarjetaDTO;
+import ar.edu.um.programacion2.principal.service.dto.TarjetaAddDTO;
+import ar.edu.um.programacion2.principal.service.dto.TarjetaDTO;
 import ar.edu.um.programacion2.principal.repository.ClienteRepository;
 import ar.edu.um.programacion2.principal.repository.TarjetaRepository;
 import ar.edu.um.programacion2.principal.repository.UserRepository;
 import ar.edu.um.programacion2.principal.security.AuthoritiesConstants;
 import ar.edu.um.programacion2.principal.security.SecurityUtils;
+import ar.edu.um.programacion2.principal.service.util.PostUtil;
 import ar.edu.um.programacion2.principal.web.rest.errors.BadRequestAlertException;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -112,7 +106,7 @@ public class TarjetaResource {
                 "\"seguridad\": " + tarjetaAddDTO.getSeguridad() + "," +
                 "\"limite\": " + tarjetaAddDTO.getLimite() + "}";
 
-        String token = postTarjeta(jsonInputString, "http://127.0.0.1:8081/tarjeta/");
+        String token = PostUtil.postTarjeta(jsonInputString, "http://127.0.0.1:8081/tarjeta/");
         Tarjeta tarjeta = new Tarjeta();
         tarjeta.setToken(token);
         tarjeta.setAlta(true);
@@ -133,19 +127,7 @@ public class TarjetaResource {
             if (tarjetaRepository.findByToken(tarjetaDTO.getToken()).getCliente().getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId())
                 return ResponseEntity.badRequest().build();
         }
-        return new ResponseEntity<String>(postTarjeta(tarjetaDTO.toString(), "http://127.0.0.1:8081/tarjeta/comprar"), HttpStatus.OK);
-    }
-
-    private String postTarjeta(String payload, String url) throws IOException {
-        StringEntity entity = new StringEntity(payload,
-            ContentType.APPLICATION_JSON);
-
-        HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpPost request = new HttpPost(url);
-        request.setEntity(entity);
-
-        HttpResponse response = httpClient.execute(request);
-        return EntityUtils.toString(response.getEntity(), "UTF-8");
+        return new ResponseEntity<String>(PostUtil.postTarjeta(tarjetaDTO.toString(), "http://127.0.0.1:8081/tarjeta/comprar"), HttpStatus.OK);
     }
 
     /**
