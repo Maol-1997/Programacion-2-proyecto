@@ -5,6 +5,7 @@ import ar.edu.um.programacion2.principal.domain.Tarjeta;
 import ar.edu.um.programacion2.principal.repository.ClienteRepository;
 import ar.edu.um.programacion2.principal.repository.TarjetaRepository;
 import ar.edu.um.programacion2.principal.repository.UserRepository;
+import ar.edu.um.programacion2.principal.service.TarjetaService;
 import ar.edu.um.programacion2.principal.web.rest.errors.ExceptionTranslator;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -73,10 +74,13 @@ public class TarjetaResourceIT {
 
     private Tarjeta tarjeta;
 
+    @Autowired
+    private TarjetaService tarjetaService;
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final TarjetaResource tarjetaResource = new TarjetaResource(userRepository, clienteRepository, tarjetaRepository);
+        final TarjetaResource tarjetaResource = new TarjetaResource(userRepository, clienteRepository, tarjetaRepository, tarjetaService);
         this.restTarjetaMockMvc = MockMvcBuilders.standaloneSetup(tarjetaResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

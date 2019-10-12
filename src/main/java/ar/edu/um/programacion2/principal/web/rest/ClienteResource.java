@@ -5,6 +5,7 @@ import ar.edu.um.programacion2.principal.repository.ClienteRepository;
 import ar.edu.um.programacion2.principal.repository.UserRepository;
 import ar.edu.um.programacion2.principal.security.AuthoritiesConstants;
 import ar.edu.um.programacion2.principal.security.SecurityUtils;
+import ar.edu.um.programacion2.principal.service.ClienteService;
 import ar.edu.um.programacion2.principal.service.dto.ClienteDTO;
 import ar.edu.um.programacion2.principal.web.rest.errors.BadRequestAlertException;
 import io.github.jhipster.web.util.HeaderUtil;
@@ -41,10 +42,12 @@ public class ClienteResource {
     private String applicationName;
     private final ClienteRepository clienteRepository;
     private final UserRepository userRepository;
+    private final ClienteService clienteService;
 
-    public ClienteResource(ClienteRepository clienteRepository, UserRepository userRepository) {
+    public ClienteResource(ClienteRepository clienteRepository, UserRepository userRepository, ClienteService clienteService) {
         this.clienteRepository = clienteRepository;
         this.userRepository = userRepository;
+        this.clienteService = clienteService;
     }
 
     /**
@@ -71,16 +74,10 @@ public class ClienteResource {
     }
     @PostMapping("/cliente")
     public ResponseEntity<Cliente> crearCliente(@RequestBody ClienteDTO clienteDTO) throws ParseException, URISyntaxException {
-        if(clienteDTO.getNombre() == null || clienteDTO.getApellido() == null)
-            throw new BadRequestAlertException("falta nombre y/o apellido", ENTITY_NAME, "missing parameters");
-        Cliente cliente = new Cliente();
-        cliente.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get());
-        cliente.setNombre(clienteDTO.getNombre());
-        cliente.setApellido(clienteDTO.getApellido());
-        Cliente result = clienteRepository.save(cliente);
-        return ResponseEntity.created(new URI("/api/clientes/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        Cliente a = clienteService.crearCliente(clienteDTO);
+        return ResponseEntity.created(new URI("/api/clientes/" + a.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, a.getId().toString()))
+            .body(a);
     }
 
 

@@ -4,6 +4,7 @@ import ar.edu.um.programacion2.principal.PrincipalApp;
 import ar.edu.um.programacion2.principal.domain.Cliente;
 import ar.edu.um.programacion2.principal.repository.ClienteRepository;
 import ar.edu.um.programacion2.principal.repository.UserRepository;
+import ar.edu.um.programacion2.principal.service.ClienteService;
 import ar.edu.um.programacion2.principal.web.rest.errors.ExceptionTranslator;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -43,6 +44,7 @@ public class ClienteResourceIT {
     @Autowired
     private UserRepository userRepository;
 
+
     @Autowired
     private ClienteRepository clienteRepository;
 
@@ -65,10 +67,13 @@ public class ClienteResourceIT {
 
     private Cliente cliente;
 
+    @Autowired
+    private ClienteService clienteService;
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final ClienteResource clienteResource = new ClienteResource(clienteRepository, userRepository);
+        final ClienteResource clienteResource = new ClienteResource(clienteRepository, userRepository, new ClienteService(userRepository,clienteRepository));
         this.restClienteMockMvc = MockMvcBuilders.standaloneSetup(clienteResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

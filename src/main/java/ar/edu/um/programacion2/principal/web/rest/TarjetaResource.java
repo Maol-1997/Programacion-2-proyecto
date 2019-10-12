@@ -1,6 +1,7 @@
 package ar.edu.um.programacion2.principal.web.rest;
 
 import ar.edu.um.programacion2.principal.domain.Tarjeta;
+import ar.edu.um.programacion2.principal.service.TarjetaService;
 import ar.edu.um.programacion2.principal.service.dto.TarjetaAddDTO;
 import ar.edu.um.programacion2.principal.service.dto.TarjetaDTO;
 import ar.edu.um.programacion2.principal.repository.ClienteRepository;
@@ -49,11 +50,13 @@ public class TarjetaResource {
     private final UserRepository userRepository;
     private final ClienteRepository clienteRepository;
     private final TarjetaRepository tarjetaRepository;
+    private final TarjetaService tarjetaService;
 
-    public TarjetaResource(UserRepository userRepository, ClienteRepository clienteRepository, TarjetaRepository tarjetaRepository) {
+    public TarjetaResource(UserRepository userRepository, ClienteRepository clienteRepository, TarjetaRepository tarjetaRepository, TarjetaService tarjetaService) {
         this.userRepository = userRepository;
         this.clienteRepository = clienteRepository;
         this.tarjetaRepository = tarjetaRepository;
+        this.tarjetaService = tarjetaService;
     }
 
     /**
@@ -87,47 +90,22 @@ public class TarjetaResource {
      */
     @PostMapping("/tarjeta")
     public ResponseEntity<Tarjeta> añadirTarjeta(@RequestBody TarjetaAddDTO tarjetaAddDTO) throws IOException, URISyntaxException {
-
         log.debug("REST request to add Tarjeta : {}", tarjetaAddDTO);
-
-        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
-            if (clienteRepository.findById(tarjetaAddDTO.getCliente_id()).get().getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
-                return ResponseEntity.badRequest().build();
-            if (tarjetaAddDTO.getNombre() == null || tarjetaAddDTO.getApellido() == null || tarjetaAddDTO.getVencimiento() == null || tarjetaAddDTO.getNumero() == null || tarjetaAddDTO.getSeguridad() == null || tarjetaAddDTO.getCliente_id() == null)
-                return ResponseEntity.badRequest().build();
-        }
-
-        String ult4 = String.valueOf(tarjetaAddDTO.getNumero()).substring(String.valueOf(tarjetaAddDTO.getNumero()).length() - 4);
-        String jsonInputString =
-            "{\"nombre\": \"" + tarjetaAddDTO.getNombre() + "\"," +
-                "\"apellido\": \"" + tarjetaAddDTO.getApellido() + "\"," +
-                "\"vencimiento\": \"" + tarjetaAddDTO.getVencimiento() + "\"," +
-                "\"numero\": " + tarjetaAddDTO.getNumero() + "," +
-                "\"seguridad\": " + tarjetaAddDTO.getSeguridad() + "," +
-                "\"limite\": " + tarjetaAddDTO.getLimite() + "}";
-
-        String token = PostUtil.postTarjeta(jsonInputString, "http://127.0.0.1:8081/tarjeta/");
-        Tarjeta tarjeta = new Tarjeta();
-        tarjeta.setToken(token);
-        tarjeta.setAlta(true);
-        tarjeta.setUltDigitos(Integer.valueOf(ult4));
-        tarjeta.setCliente(clienteRepository.findById(tarjetaAddDTO.getCliente_id()).get());
-        Tarjeta result = tarjetaRepository.save(tarjeta);
-
-        return ResponseEntity.created(new URI("/api/tarjetas/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        Tarjeta a = tarjetaService.añadirTarjeta(tarjetaAddDTO);
+        return ResponseEntity.created(new URI("/api/tarjetas/" + a.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, a.getId().toString()))
+            .body(a);
     }
 
     @PostMapping("/comprar")
     public ResponseEntity<String> comprar(@RequestBody TarjetaDTO tarjetaDTO) throws IOException {
         if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             if (tarjetaDTO.getToken() == null || tarjetaDTO.getMonto() == null)
-                return ResponseEntity.badRequest().build();
+                throw new BadRequestAlertException("falta token y/o monto", "tarjeta", "missing parameters");
             if (tarjetaRepository.findByToken(tarjetaDTO.getToken()).getCliente().getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId())
-                return ResponseEntity.badRequest().build();
+                throw new BadRequestAlertException("No te pertenece ese cliente", "tarjeta", "prohibido");
         }
-        return new ResponseEntity<String>(PostUtil.postTarjeta(tarjetaDTO.toString(), "http://127.0.0.1:8081/tarjeta/comprar"), HttpStatus.OK);
+        return new ResponseEntity<String>(tarjetaService.comprar(tarjetaDTO), HttpStatus.OK);
     }
 
     /**
