@@ -15,6 +15,9 @@ import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.env.Environment;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
@@ -26,10 +29,20 @@ public class PrincipalApp implements InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(PrincipalApp.class);
 
+    public static String jwt;
+
     private final Environment env;
 
     public PrincipalApp(Environment env) {
         this.env = env;
+        try (FileReader reader = new FileReader("JWT.txt");
+             BufferedReader br = new BufferedReader(reader)) {
+
+            this.jwt = br.readLine();
+
+        } catch (IOException e) {
+            System.err.format("IOException: %s%n", e);
+        }
     }
 
     /**

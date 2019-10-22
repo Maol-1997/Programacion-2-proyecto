@@ -44,7 +44,7 @@ public class TarjetaService {
                 "\"seguridad\": " + tarjetaAddDTO.getSeguridad() + "," +
                 "\"limite\": " + tarjetaAddDTO.getLimite() + "}";
 
-        String token = PostUtil.postTarjeta(jsonInputString, "http://127.0.0.1:8081/tarjeta/");
+        String token = PostUtil.postTarjeta(jsonInputString, "http://127.0.0.1:8081/api/tarjeta/");
         Tarjeta tarjeta = new Tarjeta();
         tarjeta.setToken(token);
         tarjeta.setAlta(true);
@@ -55,6 +55,6 @@ public class TarjetaService {
     }
 
     public String comprar(TarjetaDTO tarjetaDTO) throws IOException {
-        return PostUtil.postTarjeta(tarjetaDTO.toString(),"http://127.0.0.1:8081/tarjeta/comprar");
+        return PostUtil.postTarjeta(tarjetaDTO.toString(),"http://127.0.0.1:8081/api/tarjeta/comprar");
     }
 }
