@@ -6,8 +6,8 @@ package ar.edu.um.programacion2.tarjetas.service;
 import ar.edu.um.programacion2.tarjetas.Repository.ITarjetaRepository;
 import ar.edu.um.programacion2.tarjetas.exceptions.TarjetaNotFoundException;
 import ar.edu.um.programacion2.tarjetas.model.Tarjeta;
-import ar.edu.um.programacion2.tarjetas.model.TarjetaAddDTO;
-import ar.edu.um.programacion2.tarjetas.model.TarjetaDTO;
+import ar.edu.um.programacion2.tarjetas.model.DTO.TarjetaAddDTO;
+import ar.edu.um.programacion2.tarjetas.model.DTO.TarjetaDTO;
 import com.google.common.hash.Hashing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +36,7 @@ public class TarjetaService {
     }
 
     public String crear(TarjetaAddDTO tarjetaAddDTO){
-        String token = tarjetaAddDTO.getNombre() + tarjetaAddDTO.getApellido() + tarjetaAddDTO.getVencimiento() + tarjetaAddDTO.getNumero() + tarjetaAddDTO.getSeguridad() + System.currentTimeMillis();
+        String token = tarjetaAddDTO.getVencimiento() + tarjetaAddDTO.getNumero() + tarjetaAddDTO.getSeguridad() + System.currentTimeMillis();
         token = Hashing.sha256().hashString(token, StandardCharsets.UTF_8).toString();
         Tarjeta tarjeta = new Tarjeta();
         tarjeta.setLimite(tarjetaAddDTO.getLimite());
@@ -65,7 +65,7 @@ public class TarjetaService {
     }
 
     public Tarjeta actualizar(TarjetaAddDTO tarjetaAddDTO,long tarjetaId){
-        String token = tarjetaAddDTO.getNombre() + tarjetaAddDTO.getApellido() + tarjetaAddDTO.getVencimiento() + tarjetaAddDTO.getNumero() + tarjetaAddDTO.getSeguridad() + System.currentTimeMillis();
+        String token = tarjetaAddDTO.getVencimiento() + tarjetaAddDTO.getNumero() + tarjetaAddDTO.getSeguridad() + System.currentTimeMillis();
         token = Hashing.sha256().hashString(token, StandardCharsets.UTF_8).toString();
         Tarjeta tarjeta = new Tarjeta();
         tarjeta.setLimite(tarjetaAddDTO.getLimite());

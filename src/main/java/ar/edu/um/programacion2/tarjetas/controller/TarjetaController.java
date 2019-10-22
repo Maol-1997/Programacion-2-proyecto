@@ -4,8 +4,8 @@
 package ar.edu.um.programacion2.tarjetas.controller;
 
 import ar.edu.um.programacion2.tarjetas.model.Tarjeta;
-import ar.edu.um.programacion2.tarjetas.model.TarjetaAddDTO;
-import ar.edu.um.programacion2.tarjetas.model.TarjetaDTO;
+import ar.edu.um.programacion2.tarjetas.model.DTO.TarjetaAddDTO;
+import ar.edu.um.programacion2.tarjetas.model.DTO.TarjetaDTO;
 import ar.edu.um.programacion2.tarjetas.service.TarjetaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/tarjeta")
+@RequestMapping("/api/tarjeta")
 public class TarjetaController {
 	@Autowired
 	private TarjetaService service;
