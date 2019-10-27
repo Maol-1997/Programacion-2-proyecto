@@ -29,20 +29,10 @@ public class PrincipalApp implements InitializingBean {
 
     private static final Logger log = LoggerFactory.getLogger(PrincipalApp.class);
 
-    public static String jwt;
-
     private final Environment env;
 
     public PrincipalApp(Environment env) {
         this.env = env;
-        try (FileReader reader = new FileReader("JWT.txt");
-             BufferedReader br = new BufferedReader(reader)) {
-
-            this.jwt = br.readLine();
-
-        } catch (IOException e) {
-            System.err.format("IOException: %s%n", e);
-        }
     }
 
     /**
