@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @RestController
@@ -38,6 +39,7 @@ public class LoginController {
 
         final String jwt = Jwts.builder()
                 .setSubject(login.getLogin())
+                .setExpiration(Date.from(now.plus(1, ChronoUnit.DAYS)))
                 .setIssuedAt(Date.from(now))
                 .signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.encode(secret))
                 .compact();
