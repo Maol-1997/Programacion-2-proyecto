@@ -2,12 +2,12 @@ package ar.edu.um.programacion2.principal.service.dto;
 
 public class TarjetaDTO {
     private String token;
-    private Integer monto;
+    private Float monto;
 
     public TarjetaDTO() {
     }
 
-    public TarjetaDTO(String token, Integer monto) {
+    public TarjetaDTO(String token, Float monto) {
         this.token = token;
         this.monto = monto;
     }
@@ -20,11 +20,11 @@ public class TarjetaDTO {
         this.token = token;
     }
 
-    public Integer getMonto() {
+    public Float getMonto() {
         return monto;
     }
 
-    public void setMonto(Integer monto) {
+    public void setMonto(Float monto) {
         this.monto = monto;
     }
 
