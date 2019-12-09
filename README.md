@@ -35,7 +35,8 @@ Comprar:
     http://127.0.0.1:8080/api/comprar POST
     {
     "token": "d23905b862d28498a5c1efdf9834d700d03d4b3a67d0887503a8e109832e4125",
-    "monto": 5000
+    "precio": 5000,
+    "descripcion": "Play 4"
     }
 
 Obtener clientes:
