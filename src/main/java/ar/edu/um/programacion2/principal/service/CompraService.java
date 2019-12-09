@@ -2,11 +2,14 @@ package ar.edu.um.programacion2.principal.service;
 
 import java.io.IOException;
 
+import org.springframework.stereotype.Service;
+
 import ar.edu.um.programacion2.principal.repository.CompraRepository;
 import ar.edu.um.programacion2.principal.service.dto.CompraDTO;
 import ar.edu.um.programacion2.principal.service.dto.TarjetaDTO;
 import ar.edu.um.programacion2.principal.service.util.PostUtil;
 
+@Service
 public class CompraService {
     private CompraRepository compraRepository;
 
