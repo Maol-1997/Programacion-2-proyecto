@@ -23,14 +23,17 @@ public class Compra {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
-	@NotNull
-	@Column(name = "token", nullable = false)
-	private String token;
 	
 	@NotNull
 	@Column(name = "precio", nullable = false)
 	private Float precio;
+	
+	@Column(name = "descripcion")
+	private String descripcion;
+	
+	@ManyToOne
+	@JsonIgnoreProperties("compra")
+	private Tarjeta tarjeta;
 	
 	@ManyToOne
 	@JsonIgnoreProperties("compra")
@@ -40,13 +43,36 @@ public class Compra {
 		super();
 	}
 
-	public Compra(Long id, @NotNull String token, @NotNull Float precio, Cliente cliente) {
+
+	public Compra(Long id, @NotNull Float precio, String descripcion, Tarjeta tarjeta, Cliente cliente) {
 		super();
 		this.id = id;
-		this.token = token;
 		this.precio = precio;
+		this.descripcion = descripcion;
+		this.tarjeta = tarjeta;
 		this.cliente = cliente;
 	}
+
+
+	public String getDescripcion() {
+		return descripcion;
+	}
+
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
+
+
+	public Tarjeta getTarjeta() {
+		return tarjeta;
+	}
+
+
+	public void setTarjeta(Tarjeta tarjeta) {
+		this.tarjeta = tarjeta;
+	}
+
 
 	public Long getId() {
 		return id;
@@ -54,14 +80,6 @@ public class Compra {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
 	}
 
 	public Float getPrecio() {
