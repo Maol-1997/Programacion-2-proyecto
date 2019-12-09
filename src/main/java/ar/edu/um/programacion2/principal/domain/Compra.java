@@ -29,7 +29,7 @@ public class Compra {
 	private String token;
 	
 	@NotNull
-	@Column(name = "token", nullable = false)
+	@Column(name = "precio", nullable = false)
 	private Float precio;
 	
 	@ManyToOne
