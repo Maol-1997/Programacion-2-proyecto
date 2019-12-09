@@ -54,7 +54,5 @@ public class TarjetaService {
         return result;
     }
 
-    public String comprar(TarjetaDTO tarjetaDTO) throws IOException {
-        return PostUtil.sendPost(tarjetaDTO.toString(),"http://127.0.0.1:8081/api/tarjeta/comprar");
-    }
+
 }
