@@ -97,16 +97,6 @@ public class TarjetaResource {
             .body(a);
     }
 
-    @PostMapping("/comprar")
-    public ResponseEntity<String> comprar(@RequestBody TarjetaDTO tarjetaDTO) throws IOException {
-        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
-            if (tarjetaDTO.getToken() == null || tarjetaDTO.getMonto() == null)
-                throw new BadRequestAlertException("falta token y/o monto", "tarjeta", "missing parameters");
-            if (tarjetaRepository.findByToken(tarjetaDTO.getToken()).getCliente().getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId())
-                throw new BadRequestAlertException("No te pertenece ese cliente", "tarjeta", "prohibido");
-        }
-        return new ResponseEntity<String>(tarjetaService.comprar(tarjetaDTO), HttpStatus.OK);
-    }
 
     /**
      * {@code PUT  /tarjetas} : Updates an existing tarjeta.
