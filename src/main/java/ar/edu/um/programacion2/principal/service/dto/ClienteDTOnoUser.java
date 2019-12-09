@@ -2,31 +2,21 @@ package ar.edu.um.programacion2.principal.service.dto;
 
 import ar.edu.um.programacion2.principal.domain.User;
 
-public class ClienteDTO {
+public class ClienteDTOnoUser {
 
     private Long id;
     private String nombre;
     private String apellido;
-    private User user;
 
-    public ClienteDTO(){}
+    public ClienteDTOnoUser(){}
 
-    public ClienteDTO(String nombre, String apellido, Long id, User user){
+    public ClienteDTOnoUser(String nombre, String apellido, Long id){
         this.setNombre(nombre);
         this.setApellido(apellido);
         this.setId(id);
-        this.setUser(user);
     }
     public Long getId() {
         return id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public void setId(Long id) {
