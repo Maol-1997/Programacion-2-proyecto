@@ -5,6 +5,7 @@ import ar.edu.um.programacion2.principal.repository.ClienteRepository;
 import ar.edu.um.programacion2.principal.repository.CompraRepository;
 import ar.edu.um.programacion2.principal.repository.TarjetaRepository;
 import ar.edu.um.programacion2.principal.repository.UserRepository;
+import ar.edu.um.programacion2.principal.security.SecurityUtils;
 import ar.edu.um.programacion2.principal.service.dto.CompraDTO;
 import ar.edu.um.programacion2.principal.service.dto.TarjetaDTO;
 import ar.edu.um.programacion2.principal.service.util.PostUtil;
@@ -29,10 +30,12 @@ public class CompraService {
     private final CompraRepository compraRepository;
     private final TarjetaRepository tarjetaRepository;
     private final ClienteRepository clienteRepository;
-    public CompraService(CompraRepository compraRepository, TarjetaRepository tarjetaRepository, ClienteRepository clienteRepository) {
+    private final UserRepository userRepository;
+public CompraService(CompraRepository compraRepository, TarjetaRepository tarjetaRepository, ClienteRepository clienteRepository, UserRepository userRepository) {
         this.compraRepository = compraRepository;
         this.tarjetaRepository = tarjetaRepository;
         this.clienteRepository = clienteRepository;
+        this.userRepository = userRepository;
     }
 
     public ResponseEntity<String> comprar(CompraDTO compraDTO) throws IOException {
@@ -45,6 +48,7 @@ public class CompraService {
         	compra.setCliente(tarjetaRepository.findByToken(compraDTO.getToken()).getCliente());
         	compra.setDescripcion(compraDTO.getDescripcion());
         	compra.setPrecio(compraDTO.getPrecio());
+        	compra.setUsurio(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get());
         	compra.setTarjeta(tarjetaRepository.findByToken(compraDTO.getToken()));
         	Compra result = compraRepository.save(compra);
         	return new ResponseEntity<String>(EntityUtils.toString(response.getEntity(), "UTF-8"), HttpStatus.OK);

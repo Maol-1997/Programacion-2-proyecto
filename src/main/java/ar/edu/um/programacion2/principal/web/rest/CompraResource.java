@@ -56,6 +56,13 @@ public class CompraResource {
         }
         return compraService.comprar(compraDTO);
     }
+    @GetMapping("/compras")
+    public ResponseEntity<List<CompraDTO>> getAllCompras() {
+        log.debug("REST request to get a page of Compras");
+        Page<CompraDTO> page = compraService.findByUserLogin(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId());
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
 }
 
 /**
