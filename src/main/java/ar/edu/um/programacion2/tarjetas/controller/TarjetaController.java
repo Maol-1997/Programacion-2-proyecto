@@ -37,7 +37,7 @@ public class TarjetaController {
 
 	@PostMapping("/comprar")
 	public ResponseEntity<String> comprar(@RequestBody TarjetaDTO tarjetaDTO) {
-		return new ResponseEntity<String>(service.comprar(tarjetaDTO),HttpStatus.OK);
+		return service.comprar(tarjetaDTO);
 	}
 
 	@DeleteMapping("/{tarjetaId}")

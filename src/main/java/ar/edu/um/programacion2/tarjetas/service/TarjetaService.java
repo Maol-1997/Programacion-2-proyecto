@@ -10,6 +10,8 @@ import ar.edu.um.programacion2.tarjetas.model.DTO.TarjetaAddDTO;
 import ar.edu.um.programacion2.tarjetas.model.DTO.TarjetaDTO;
 import com.google.common.hash.Hashing;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -46,22 +48,22 @@ public class TarjetaService {
         return token;
     }
 
-    public String comprar(TarjetaDTO tarjetaDTO){
+    public ResponseEntity<String> comprar(TarjetaDTO tarjetaDTO){
         Tarjeta tarjeta = findByToken(tarjetaDTO.getToken());
         if(tarjeta == null)
-            return "Error, la tarjeta no existe en la DB";
+            return new ResponseEntity<String>("Error, la tarjeta no existe en la DB", HttpStatus.NOT_FOUND);
         if(tarjeta.getLimite() < Integer.valueOf(tarjetaDTO.getMonto()))
-            return "La compra excede el limite de la tarjeta";
+            return new ResponseEntity<>("La compra excede el limite de la tarjeta",HttpStatus.FORBIDDEN);
 
         LocalDate today = LocalDate.now();
         String [] expira = tarjeta.getExpira().split("/");
         if((today.getMonthValue() > Integer.valueOf(expira[0]) && today.getYear() >= Integer.valueOf(expira[1])))
-            return "Tarjeta expirada";
+            return new ResponseEntity<>("Tarjeta expirada",HttpStatus.FORBIDDEN);
 
         Random r = new Random();
         if((r.nextInt((10 - 1) + 1) + 1) == 5 || (r.nextInt((10 - 1) + 1) + 1) == 6) //20% chances de saldo insuficiente
-            return "Saldo insuficiente";
-        return "Operacion realizada con exito";
+            return new ResponseEntity<>("Saldo insuficiente",HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>("Operacion realizada con exito",HttpStatus.CREATED);
     }
 
     public Tarjeta actualizar(TarjetaAddDTO tarjetaAddDTO,long tarjetaId){

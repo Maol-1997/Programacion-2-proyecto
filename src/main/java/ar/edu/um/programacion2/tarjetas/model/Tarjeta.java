@@ -17,7 +17,6 @@ import java.io.Serializable;
 @Entity
 @Table(name = "tarjeta")
 public class Tarjeta implements Serializable {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "tarjetaId")
@@ -34,5 +33,4 @@ public class Tarjeta implements Serializable {
 	@Column(name = "expira")
 	@NotNull
 	private String expira;
-
 }
