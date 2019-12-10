@@ -43,7 +43,6 @@ public class CompraService {
         if(response.getStatusLine().toString().contains("201")) {
         	Compra compra = new Compra();
         	compra.setCliente(clienteRepository.getOne(compraDTO.getId_cliente()));
-        	System.out.println(clienteRepository.getOne(compraDTO.getId_cliente()));
         	compra.setDescripcion(compraDTO.getDescripcion());
         	compra.setPrecio(compraDTO.getPrecio());
         	compra.setTarjeta(tarjetaRepository.findByToken(compraDTO.getToken()));
@@ -51,7 +50,7 @@ public class CompraService {
         	return new ResponseEntity<String>(EntityUtils.toString(response.getEntity(), "UTF-8"), HttpStatus.OK);
         }
         else{
-        	return new ResponseEntity<String>("", HttpStatus.FORBIDDEN);
+        	return new ResponseEntity<String>(EntityUtils.toString(response.getEntity(), "UTF-8"), HttpStatus.FORBIDDEN);
         }
     }
 }

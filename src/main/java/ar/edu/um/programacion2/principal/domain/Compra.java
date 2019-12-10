@@ -25,22 +25,22 @@ public class Compra implements Serializable {
     @NotNull
     @Column(name = "precio", nullable = false)
     private Float precio;
-    
+
     @NotNull
-    @Column(name = "descricion", nullable = false)
+    @Column(name = "descripcion", nullable = false)
     private String descripcion;
 
     @ManyToOne
     @JsonIgnoreProperties("compras")
     private Cliente cliente;
-    
+
     @ManyToOne
     @JsonIgnoreProperties("compras")
     private Tarjeta tarjeta;
-    
+
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
-    
+
     public Long getId() {
         return id;
     }
