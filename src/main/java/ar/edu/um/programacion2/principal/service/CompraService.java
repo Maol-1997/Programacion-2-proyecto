@@ -43,6 +43,7 @@ public class CompraService {
         if(response.getStatusLine().toString().contains("201")) {
         	Compra compra = new Compra();
         	compra.setCliente(clienteRepository.getOne(compraDTO.getId_cliente()));
+        	System.out.println(clienteRepository.getOne(compraDTO.getId_cliente()));
         	compra.setDescripcion(compraDTO.getDescripcion());
         	compra.setPrecio(compraDTO.getPrecio());
         	compra.setTarjeta(tarjetaRepository.findByToken(compraDTO.getToken()));

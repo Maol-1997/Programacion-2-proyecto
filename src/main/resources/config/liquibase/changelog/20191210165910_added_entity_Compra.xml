@@ -19,8 +19,14 @@
             <column name="precio" type="${floatType}">
                 <constraints nullable="false" />
             </column>
+            <column name="descripcion" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
             <column name="tarjeta_id" type="bigint">
-                <constraints nullable="true" />
+                <constraints nullable="false" />
+            </column>
+            <column name="cliente_id" type="bigint">
+                <constraints nullable="false" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>

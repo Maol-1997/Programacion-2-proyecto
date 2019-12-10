@@ -50,6 +50,7 @@ public class TarjetaService {
 
         HttpResponse response = PostUtil.sendPost(jsonInputString, "http://127.0.0.1:8081/api/tarjeta/");
         String token = EntityUtils.toString(response.getEntity(), "UTF-8");
+        System.out.println(token);
         Tarjeta tarjeta = new Tarjeta();
         tarjeta.setToken(token);
         tarjeta.setAlta(true);

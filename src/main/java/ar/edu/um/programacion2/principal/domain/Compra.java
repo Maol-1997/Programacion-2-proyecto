@@ -19,73 +19,38 @@ public class Compra implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	
-	@NotNull
-	@Column(name = "precio", nullable = false)
-	private Float precio;
-	
-	@Column(name = "descripcion")
-	private String descripcion;
-	
-	@ManyToOne
-	@JsonIgnoreProperties("compra")
-	private Tarjeta tarjeta;
-	
-	@ManyToOne
-	@JsonIgnoreProperties("compra")
-	private Cliente cliente;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	public Compra() {
-		super();
-	}
+    @NotNull
+    @Column(name = "precio", nullable = false)
+    private Float precio;
+    
+    @NotNull
+    @Column(name = "descricion", nullable = false)
+    private String descripcion;
 
+    @ManyToOne
+    @JsonIgnoreProperties("compras")
+    private Cliente cliente;
+    
+    @ManyToOne
+    @JsonIgnoreProperties("compras")
+    private Tarjeta tarjeta;
+    
 
-	public Compra(Long id, @NotNull Float precio, String descripcion, Tarjeta tarjeta, Cliente cliente) {
-		super();
-		this.id = id;
-		this.precio = precio;
-		this.descripcion = descripcion;
-		this.tarjeta = tarjeta;
-		this.cliente = cliente;
-	}
+    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    
+    public Long getId() {
+        return id;
+    }
 
-
-	public String getDescripcion() {
+    public String getDescripcion() {
 		return descripcion;
 	}
 
-
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
-	}
-
-
-	public Tarjeta getTarjeta() {
-		return tarjeta;
-	}
-
-
-	public void setTarjeta(Tarjeta tarjeta) {
-		this.tarjeta = tarjeta;
-	}
-
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Float getPrecio() {
-		return precio;
-	}
-
-	public void setPrecio(Float precio) {
-		this.precio = precio;
 	}
 
 	public Cliente getCliente() {
@@ -95,6 +60,38 @@ public class Compra implements Serializable {
 	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
 	}
+
+	public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Float getPrecio() {
+        return precio;
+    }
+
+    public Compra precio(Float precio) {
+        this.precio = precio;
+        return this;
+    }
+
+    public void setPrecio(Float precio) {
+        this.precio = precio;
+    }
+
+    public Tarjeta getTarjeta() {
+        return tarjeta;
+    }
+
+    public Compra tarjeta(Tarjeta tarjeta) {
+        this.tarjeta = tarjeta;
+        return this;
+    }
+
+    public void setTarjeta(Tarjeta tarjeta) {
+        this.tarjeta = tarjeta;
+    }
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -115,8 +112,7 @@ public class Compra implements Serializable {
     public String toString() {
         return "Compra{" +
             "id=" + getId() +
-            ", precio='" + getPrecio() + "'" +
-            ", descripcion='" + getDescripcion() + "'" +
+            ", precio=" + getPrecio() +
             "}";
     }
 }
