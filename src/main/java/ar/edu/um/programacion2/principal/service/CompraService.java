@@ -42,7 +42,7 @@ public class CompraService {
         //No me gusta este metodo de  agarrar si mando un 200 (buscar alternativa)
         if(response.getStatusLine().toString().contains("201")) {
         	Compra compra = new Compra();
-        	compra.setCliente(clienteRepository.getOne(compraDTO.getId_cliente()));
+        	compra.setCliente(tarjetaRepository.findByToken(compraDTO.getToken()).getCliente());
         	compra.setDescripcion(compraDTO.getDescripcion());
         	compra.setPrecio(compraDTO.getPrecio());
         	compra.setTarjeta(tarjetaRepository.findByToken(compraDTO.getToken()));

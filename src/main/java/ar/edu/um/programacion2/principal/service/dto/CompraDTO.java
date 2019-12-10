@@ -9,31 +9,28 @@ import java.util.Objects;
 public class CompraDTO implements Serializable {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String token;
-	private Long id_cliente;
 	private Float precio;
 	private String descripcion;
-	
-	
+
+
 	public CompraDTO() {
 		super();
 	}
-	public CompraDTO(Long id, String token, Long id_cliente, Float precio, String descripcion) {
+	public CompraDTO(Long id, String token, Float precio, String descripcion) {
 		super();
 		this.id = id;
 		this.token = token;
-		this.id_cliente = id_cliente;
 		this.precio = precio;
 		this.descripcion = descripcion;
 	}
-	public CompraDTO(String token, Long id_cliente, Float precio, String descripcion) {
+	public CompraDTO(String token, Float precio, String descripcion) {
 		super();
 		this.token = token;
-		this.id_cliente = id_cliente;
 		this.precio = precio;
 		this.descripcion = descripcion;
 	}
@@ -48,12 +45,6 @@ public class CompraDTO implements Serializable {
 	}
 	public void setToken(String token) {
 		this.token = token;
-	}
-	public Long getId_cliente() {
-		return id_cliente;
-	}
-	public void setId_cliente(Long id_cliente) {
-		this.id_cliente = id_cliente;
 	}
 	public Float getPrecio() {
 		return precio;
