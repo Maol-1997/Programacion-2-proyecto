@@ -54,7 +54,7 @@ public class CompraResource {
             if (tarjetaRepository.findByToken(compraDTO.getToken()).getCliente().getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId())
                 throw new BadRequestAlertException("No te pertenece ese cliente", "tarjeta", "prohibido");
         }
-        return new ResponseEntity<String>(compraService.comprar(compraDTO), HttpStatus.OK);
+        return compraService.comprar(compraDTO);
     }
 }
 
