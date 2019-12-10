@@ -13,7 +13,7 @@ import java.io.IOException;
 public class PostUtil {
     private static String jwt = ""; //JWT TOKEN
 
-    public static String sendPost(String payload, String url) throws IOException {
+    public static HttpResponse sendPost(String payload, String url) throws IOException {
         HttpResponse response;
         boolean flag;
         do {
@@ -29,8 +29,8 @@ public class PostUtil {
             getJwt();
         }while(flag);
 
-
-        return EntityUtils.toString(response.getEntity(), "UTF-8");
+        return response;
+        //return EntityUtils.toString(response.getEntity(), "UTF-8");
     }
 
     public static void getJwt() throws IOException {

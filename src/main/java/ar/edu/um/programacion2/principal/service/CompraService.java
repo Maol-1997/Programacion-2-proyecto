@@ -1,10 +1,15 @@
 package ar.edu.um.programacion2.principal.service;
 
+import ar.edu.um.programacion2.principal.domain.Compra;
+import ar.edu.um.programacion2.principal.repository.ClienteRepository;
 import ar.edu.um.programacion2.principal.repository.CompraRepository;
+import ar.edu.um.programacion2.principal.repository.TarjetaRepository;
+import ar.edu.um.programacion2.principal.repository.UserRepository;
 import ar.edu.um.programacion2.principal.service.dto.CompraDTO;
 import ar.edu.um.programacion2.principal.service.dto.TarjetaDTO;
 import ar.edu.um.programacion2.principal.service.util.PostUtil;
-
+import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,11 +23,34 @@ import java.util.Optional;
 
 @Service
 public class CompraService {
-    private CompraRepository compraRepository;
+    private final CompraRepository compraRepository;
+    private final TarjetaRepository tarjetaRepository;
+    private final ClienteRepository clienteRepository;
+    public CompraService(CompraRepository compraRepository, TarjetaRepository tarjetaRepository, ClienteRepository clienteRepository) {
+        this.compraRepository = compraRepository;
+        this.tarjetaRepository = tarjetaRepository;
+        this.clienteRepository = clienteRepository;
+    }
 
     public String comprar(CompraDTO compraDTO) throws IOException {
         TarjetaDTO tarjetaDTO = new TarjetaDTO(compraDTO.getToken(),compraDTO.getPrecio());
-        return PostUtil.sendPost(tarjetaDTO.toString(),"http://127.0.0.1:8081/api/tarjeta/comprar");
+        //return PostUtil.sendPost(tarjetaDTO.toString(),"http://127.0.0.1:8081/api/tarjeta/comprar");
+        HttpResponse response = PostUtil.sendPost(tarjetaDTO.toString(),"http://127.0.0.1:8081/api/tarjeta/comprar");
+        //No me gusta este metodo de  agarrar si mando un 200 (buscar alternativa)
+        Boolean flag = response.getStatusLine().toString().contains("200"); 
+        if(flag) {
+        	Compra compra = new Compra();
+        	compra.setCliente(clienteRepository.getOne(compraDTO.getId_cliente()));
+        	compra.setDescripcion(compraDTO.getDescripcion());
+        	compra.setPrecio(compraDTO.getPrecio());
+        	compra.setTarjeta(tarjetaRepository.findByToken(compraDTO.getToken()));
+        	Compra result = compraRepository.save(compra);
+        	return EntityUtils.toString(response.getEntity(), "UTF-8");
+        }
+        else {
+        	//Falta Implementar que passa si el microservicio dijo que la compra estaba mal
+        	return null; 
+        }
     }
 }
 

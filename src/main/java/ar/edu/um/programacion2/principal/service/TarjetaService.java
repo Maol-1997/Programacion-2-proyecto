@@ -10,7 +10,11 @@ import ar.edu.um.programacion2.principal.service.dto.TarjetaAddDTO;
 import ar.edu.um.programacion2.principal.service.dto.TarjetaDTO;
 import ar.edu.um.programacion2.principal.service.util.PostUtil;
 import ar.edu.um.programacion2.principal.web.rest.errors.BadRequestAlertException;
+import org.apache.http.HttpResponse;
+
+import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.resource.HttpResource;
 
 import java.io.IOException;
 
@@ -44,7 +48,8 @@ public class TarjetaService {
                 "\"seguridad\": " + tarjetaAddDTO.getSeguridad() + "," +
                 "\"limite\": " + tarjetaAddDTO.getLimite() + "}";
 
-        String token = PostUtil.sendPost(jsonInputString, "http://127.0.0.1:8081/api/tarjeta/");
+        HttpResponse response = PostUtil.sendPost(jsonInputString, "http://127.0.0.1:8081/api/tarjeta/");
+        String token = EntityUtils.toString(response.getEntity(), "UTF-8");
         Tarjeta tarjeta = new Tarjeta();
         tarjeta.setToken(token);
         tarjeta.setAlta(true);

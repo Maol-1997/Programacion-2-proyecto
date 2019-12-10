@@ -30,6 +30,13 @@ public class CompraDTO implements Serializable {
 		this.precio = precio;
 		this.descripcion = descripcion;
 	}
+	public CompraDTO(String token, Long id_cliente, Float precio, String descripcion) {
+		super();
+		this.token = token;
+		this.id_cliente = id_cliente;
+		this.precio = precio;
+		this.descripcion = descripcion;
+	}
 	public Long getId() {
 		return id;
 	}
