@@ -1,13 +1,20 @@
 package ar.edu.um.programacion2.principal.service;
 
-import java.io.IOException;
-
-import org.springframework.stereotype.Service;
-
 import ar.edu.um.programacion2.principal.repository.CompraRepository;
 import ar.edu.um.programacion2.principal.service.dto.CompraDTO;
 import ar.edu.um.programacion2.principal.service.dto.TarjetaDTO;
 import ar.edu.um.programacion2.principal.service.util.PostUtil;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.Optional;
+
+/**
+ * Service Interface for managing {@link ar.edu.um.programacion2.principal.domain.Compra}.
+ */
 
 @Service
 public class CompraService {
@@ -18,3 +25,38 @@ public class CompraService {
         return PostUtil.sendPost(tarjetaDTO.toString(),"http://127.0.0.1:8081/api/tarjeta/comprar");
     }
 }
+
+//public interface CompraService {
+//
+//    /**
+//     * Save a compra.
+//     *
+//     * @param compraDTO the entity to save.
+//     * @return the persisted entity.
+//     */
+//    CompraDTO save(CompraDTO compraDTO);
+//
+//    /**
+//     * Get all the compras.
+//     *
+//     * @param pageable the pagination information.
+//     * @return the list of entities.
+//     */
+//    Page<CompraDTO> findAll(Pageable pageable);
+//
+//
+//    /**
+//     * Get the "id" compra.
+//     *
+//     * @param id the id of the entity.
+//     * @return the entity.
+//     */
+//    Optional<CompraDTO> findOne(Long id);
+//
+//    /**
+//     * Delete the "id" compra.
+//     *
+//     * @param id the id of the entity.
+//     */
+//    void delete(Long id);
+//}

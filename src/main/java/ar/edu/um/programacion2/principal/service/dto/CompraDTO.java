@@ -1,7 +1,17 @@
 package ar.edu.um.programacion2.principal.service.dto;
+import javax.validation.constraints.*;
+import java.io.Serializable;
+import java.util.Objects;
 
-public class CompraDTO {
+/**
+ * A DTO for the {@link ar.edu.um.programacion2.principal.domain.Compra} entity.
+ */
+public class CompraDTO implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Long id;
 	private String token;
 	private Long id_cliente;
@@ -50,5 +60,4 @@ public class CompraDTO {
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
-	
 }

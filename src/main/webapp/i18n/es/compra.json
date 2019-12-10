@@ -1,0 +1,23 @@
+{
+  "principalApp": {
+    "compra": {
+      "home": {
+        "title": "Compras",
+        "createLabel": "Crear nuevo Compra",
+        "createOrEditLabel": "Crear o editar Compra",
+        "notFound": "No Compras found"
+      },
+      "created": "Un nuevo Compra ha sido creado con el identificador {{ param }}",
+      "updated": "Un Compra ha sido actualizado con el identificador {{ param }}",
+      "deleted": "Un Compra ha sido eliminado con el identificador {{ param }}",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar Compra {{ id }}?"
+      },
+      "detail": {
+        "title": "Compra"
+      },
+      "precio": "Precio",
+      "tarjeta": "Tarjeta"
+    }
+  }
+}
