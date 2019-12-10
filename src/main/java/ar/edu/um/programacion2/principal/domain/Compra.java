@@ -37,6 +37,10 @@ public class Compra implements Serializable {
     @ManyToOne
     @JsonIgnoreProperties("compras")
     private Tarjeta tarjeta;
+    
+    @ManyToOne
+    @JsonIgnoreProperties("compras")
+    private User usurio;
 
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
@@ -45,7 +49,15 @@ public class Compra implements Serializable {
         return id;
     }
 
-    public String getDescripcion() {
+    public User getUsurio() {
+		return usurio;
+	}
+
+	public void setUsurio(User usurio) {
+		this.usurio = usurio;
+	}
+
+	public String getDescripcion() {
 		return descripcion;
 	}
 
