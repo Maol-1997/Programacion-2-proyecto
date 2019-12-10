@@ -76,4 +76,14 @@ public class TarjetaAddDTO {
     public void setCliente_id(Long cliente_id) {
         this.cliente_id = cliente_id;
     }
+
+    @Override
+    public String toString() {
+        return "{\"nombre\": \"" + getNombre() + "\"," +
+            "\"apellido\": \"" + getApellido() + "\"," +
+            "\"vencimiento\": \"" + getVencimiento() + "\"," +
+            "\"numero\": " + getNumero() + "," +
+            "\"seguridad\": " + getSeguridad() + "," +
+            "\"limite\": " + getLimite() + "}";
+    }
 }

@@ -40,15 +40,8 @@ public class TarjetaService {
         }
 
         String ult4 = String.valueOf(tarjetaAddDTO.getNumero()).substring(String.valueOf(tarjetaAddDTO.getNumero()).length() - 4);
-        String jsonInputString =
-            "{\"nombre\": \"" + tarjetaAddDTO.getNombre() + "\"," +
-                "\"apellido\": \"" + tarjetaAddDTO.getApellido() + "\"," +
-                "\"vencimiento\": \"" + tarjetaAddDTO.getVencimiento() + "\"," +
-                "\"numero\": " + tarjetaAddDTO.getNumero() + "," +
-                "\"seguridad\": " + tarjetaAddDTO.getSeguridad() + "," +
-                "\"limite\": " + tarjetaAddDTO.getLimite() + "}";
 
-        HttpResponse response = PostUtil.sendPost(jsonInputString, "http://127.0.0.1:8081/api/tarjeta/");
+        HttpResponse response = PostUtil.sendPost(tarjetaAddDTO.toString(), "http://127.0.0.1:8081/api/tarjeta/");
         String token = EntityUtils.toString(response.getEntity(), "UTF-8");
         System.out.println(token);
         Tarjeta tarjeta = new Tarjeta();
