@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -16,4 +17,6 @@ public interface TarjetaRepository extends JpaRepository<Tarjeta, Long> {
     List<Tarjeta> findByUserIsCurrentUser();
 
     Tarjeta findByToken(String token);
+
+	Tarjeta save(Optional<Tarjeta> tarjeta);
 }

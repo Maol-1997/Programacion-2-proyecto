@@ -133,7 +133,7 @@ public class TarjetaResource {
 //        if (tarjeta.getCliente_id() == null)
 //            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "null cliente");
 
-		Tarjeta result = tarjetaService.editarTarjeta(tarjeta);
+		Tarjeta result = tarjetaService.editTarjeta(tarjeta);
 		return ResponseEntity.ok().headers(
 				HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, tarjeta.getId().toString()))
 				.body(result);
@@ -153,7 +153,7 @@ public class TarjetaResource {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept","*/*");
-		return ResponseEntity.ok().headers(headers).body(tarjetaService.bustarTodasTarjeta());
+		return ResponseEntity.ok().headers(headers).body(tarjetaService.getAllTarjeta());
 
 	}
 
@@ -168,11 +168,11 @@ public class TarjetaResource {
 	@GetMapping("/tarjeta/{id}")
 	public ResponseEntity<Tarjeta> getTarjeta(@PathVariable Long id) throws IOException {
 		log.debug("REST request to get Tarjeta : {}", id);
-//		if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
-//			if (tarjetaRepository.findById(id).get().getCliente().getUser().getId() != userRepository
-//					.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
-//				throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
-		Optional<Tarjeta> tarjeta = tarjetaService.buscarTarjeta(id);
+		if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
+			if (tarjetaRepository.findById(id).get().getCliente().getUser().getId() != userRepository
+					.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
+				throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
+		Optional<Tarjeta> tarjeta = tarjetaService.findTarjeta(id);
 		return ResponseUtil.wrapOrNotFound(tarjeta);
 	}
 
@@ -181,15 +181,16 @@ public class TarjetaResource {
 	 *
 	 * @param id the id of the tarjeta to delete.
 	 * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
+	 * @throws IOException 
 	 */
-	@DeleteMapping("/tarjetas/{id}")
-	public ResponseEntity<Void> deleteTarjeta(@PathVariable Long id) {
+	@DeleteMapping("/tarjeta/{id}")
+	public ResponseEntity<Void> deleteTarjeta(@PathVariable Long id) throws IOException {
 		log.debug("REST request to delete Tarjeta : {}", id);
 		if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
 			if (tarjetaRepository.findById(id).get().getCliente().getUser().getId() != userRepository
 					.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
 				throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
-		tarjetaRepository.deleteById(id);
+		tarjetaService.deleteById(id);
 		return ResponseEntity.noContent()
 				.headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
 				.build();

@@ -55,7 +55,7 @@ public class TarjetaService {
         Tarjeta result = tarjetaRepository.save(tarjeta);
         return result;
     }
-    public Tarjeta editarTarjeta(TarjetaAddDTO tarjetaAddDTO) throws IOException {
+    public Tarjeta editTarjeta(TarjetaAddDTO tarjetaAddDTO) throws IOException {
         if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             if (clienteRepository.findById(tarjetaAddDTO.getCliente_id()).get().getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
                 throw new BadRequestAlertException("No te pertenece ese cliente", "tarjeta", "prohibido");
@@ -77,7 +77,7 @@ public class TarjetaService {
         Tarjeta result = tarjetaRepository.save(tarjeta);
         return result;
     }
-    public  Optional<Tarjeta> buscarTarjeta(Long id) throws IOException {
+    public  Optional<Tarjeta> findTarjeta(Long id) throws IOException {
 //        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
 //            if (clienteRepository.findById(tarjetaAddDTO.getCliente_id()).get().getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
 //                throw new BadRequestAlertException("No te pertenece ese cliente", "tarjeta", "prohibido");
@@ -88,11 +88,25 @@ public class TarjetaService {
         Optional<Tarjeta> result = tarjetaRepository.findById(id);
         return result;
     }
-    public List<Tarjeta> bustarTodasTarjeta() throws IOException {
+    public List<Tarjeta> getAllTarjeta() throws IOException {
 
 
         List<Tarjeta> list = tarjetaRepository.findByUserIsCurrentUser();
 		return list;
+
+    }
+
+    public void deleteById(Long id) throws IOException {
+    	Optional<Tarjeta> found = tarjetaRepository.findById(id);
+    	if(found.isPresent()) {
+    	   Tarjeta tarjeta = found.get();
+    	   tarjeta.setAlta(false);
+           Tarjeta result = tarjetaRepository.save(tarjeta);
+           //return result;
+
+    	} else {
+            throw new BadRequestAlertException("id no encontrada", "tarjeta", "bad id");
+    	}
 
     }
 
