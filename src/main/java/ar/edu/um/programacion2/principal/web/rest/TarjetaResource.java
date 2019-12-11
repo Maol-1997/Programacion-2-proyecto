@@ -61,33 +61,6 @@ public class TarjetaResource {
 		this.tarjetaService = tarjetaService;
 	}
 
-	/**
-	 * {@code POST  /tarjetas} : Create a new tarjeta.
-	 *
-	 * @param tarjeta the tarjeta to create.
-	 * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with
-	 *         body the new tarjeta, or with status {@code 400 (Bad Request)} if the
-	 *         tarjeta has already an ID.
-	 * @throws URISyntaxException if the Location URI syntax is incorrect.
-	 */
-//	@PostMapping("/tarjetas")
-//	public ResponseEntity<Tarjeta> createTarjeta(@Valid @RequestBody Tarjeta tarjeta) throws URISyntaxException {
-//		log.debug("REST request to save Tarjeta : {}", tarjeta);
-//		if (tarjeta.getId() != null) {
-//			throw new BadRequestAlertException("A new tarjeta cannot already have an ID", ENTITY_NAME, "idexists");
-//		}
-//		if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
-//			if (clienteRepository.findById(tarjeta.getCliente().getId()).get().getUser().getId() != userRepository
-//					.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()
-//					|| tarjeta.getCliente() == null)// seguridad
-//				return ResponseEntity.badRequest().build();
-//
-//		Tarjeta result = tarjetaRepository.save(tarjeta);
-//		return ResponseEntity
-//				.created(new URI("/api/tarjetas/" + result.getId())).headers(HeaderUtil
-//						.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-//				.body(result);
-//	}
 
 	/**
 	 * {@code POST  /tarjetas} : Create a new tarjeta.
@@ -101,10 +74,7 @@ public class TarjetaResource {
 	public ResponseEntity<Tarjeta> añadirTarjeta(@RequestBody TarjetaAddDTO tarjetaAddDTO)
 			throws IOException, URISyntaxException {
 		log.debug("REST request to add Tarjeta : {}", tarjetaAddDTO);
-		Tarjeta a = tarjetaService.añadirTarjeta(tarjetaAddDTO);
-		return ResponseEntity.created(new URI("/api/tarjetas/" + a.getId()))
-				.headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, a.getId().toString()))
-				.body(a);
+		return tarjetaService.añadirTarjeta(tarjetaAddDTO);
 	}
 
 	/**
@@ -123,20 +93,7 @@ public class TarjetaResource {
 	public ResponseEntity<Tarjeta> updateTarjeta(@Valid @RequestBody TarjetaAddDTO tarjeta)
 			throws URISyntaxException, IOException {
 		log.debug("REST request to update Tarjeta : {}", tarjeta);
-		if (tarjeta.getId() == null) {
-			throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-		}
-
-//        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
-//            if (clienteRepository.findById(tarjeta.getCliente_id()).get().getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId() || tarjeta.getCliente() == null) //seguridad
-//                throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
-//        if (tarjeta.getCliente_id() == null)
-//            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "null cliente");
-
-		Tarjeta result = tarjetaService.editTarjeta(tarjeta);
-		return ResponseEntity.ok().headers(
-				HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, tarjeta.getId().toString()))
-				.body(result);
+		return tarjetaService.editTarjeta(tarjeta);
 	}
 
 	/**
@@ -150,11 +107,7 @@ public class TarjetaResource {
 	@GetMapping("/tarjeta")
 	public ResponseEntity<List<Tarjeta>> getAllTarjetas() throws IOException {
 		log.debug("REST request to get a page of Tarjetas");
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept","*/*");
-		return ResponseEntity.ok().headers(headers).body(tarjetaService.getAllTarjeta());
-
+		return tarjetaService.getAllTarjeta();
 	}
 
 	/**
@@ -168,12 +121,7 @@ public class TarjetaResource {
 	@GetMapping("/tarjeta/{id}")
 	public ResponseEntity<Tarjeta> getTarjeta(@PathVariable Long id) throws IOException {
 		log.debug("REST request to get Tarjeta : {}", id);
-		if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
-			if (tarjetaRepository.findById(id).get().getCliente().getUser().getId() != userRepository
-					.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
-				throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
-		Optional<Tarjeta> tarjeta = tarjetaService.findTarjeta(id);
-		return ResponseUtil.wrapOrNotFound(tarjeta);
+		return tarjetaService.findTarjeta(id);
 	}
 
 	/**
@@ -184,15 +132,8 @@ public class TarjetaResource {
 	 * @throws IOException 
 	 */
 	@DeleteMapping("/tarjeta/{id}")
-	public ResponseEntity<Void> deleteTarjeta(@PathVariable Long id) throws IOException {
+	public ResponseEntity<Object> deleteTarjeta(@PathVariable Long id) throws IOException {
 		log.debug("REST request to delete Tarjeta : {}", id);
-		if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
-			if (tarjetaRepository.findById(id).get().getCliente().getUser().getId() != userRepository
-					.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
-				throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
-		tarjetaService.deleteById(id);
-		return ResponseEntity.noContent()
-				.headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
-				.build();
+		return tarjetaService.deleteById(id);
 	}
 }
