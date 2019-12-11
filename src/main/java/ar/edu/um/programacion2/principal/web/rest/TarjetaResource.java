@@ -163,15 +163,16 @@ public class TarjetaResource {
 	 * @param id the id of the tarjeta to retrieve.
 	 * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
 	 *         the tarjeta, or with status {@code 404 (Not Found)}.
+	 * @throws IOException 
 	 */
-	@GetMapping("/tarjetas/{id}")
-	public ResponseEntity<Tarjeta> getTarjeta(@PathVariable Long id) {
+	@GetMapping("/tarjeta/{id}")
+	public ResponseEntity<Tarjeta> getTarjeta(@PathVariable Long id) throws IOException {
 		log.debug("REST request to get Tarjeta : {}", id);
-		if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
-			if (tarjetaRepository.findById(id).get().getCliente().getUser().getId() != userRepository
-					.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
-				throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
-		Optional<Tarjeta> tarjeta = tarjetaRepository.findById(id);
+//		if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
+//			if (tarjetaRepository.findById(id).get().getCliente().getUser().getId() != userRepository
+//					.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
+//				throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
+		Optional<Tarjeta> tarjeta = tarjetaService.buscarTarjeta(id);
 		return ResponseUtil.wrapOrNotFound(tarjeta);
 	}
 
