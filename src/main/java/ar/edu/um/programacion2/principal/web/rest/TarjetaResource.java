@@ -124,6 +124,12 @@ public class TarjetaResource {
 		return tarjetaService.findTarjeta(id);
 	}
 
+	@GetMapping("/tarjeta/token/{token}")
+	public ResponseEntity<Tarjeta> getTarjetaByToken(@PathVariable String token) throws IOException {
+		log.debug("REST request to get Tarjeta : {}", token);
+		return tarjetaService.findTarjetaByToken(token);
+	}
+
 	/**
 	 * {@code DELETE  /tarjetas/:id} : delete the "id" tarjeta.
 	 *

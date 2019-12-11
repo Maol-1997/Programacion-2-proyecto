@@ -123,6 +123,16 @@ public class TarjetaService {
 		return ResponseUtil.wrapOrNotFound(result);
 	}
 
+	public ResponseEntity<Tarjeta> findTarjetaByToken(String token) throws IOException {
+		// if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
+		if (tarjetaRepository.findByToken(token).get().getCliente().getUser().getId() != userRepository
+				.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
+			throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
+
+		Optional<Tarjeta> result = tarjetaRepository.findByToken(token);
+		return ResponseUtil.wrapOrNotFound(result);
+	}
+
 	public ResponseEntity<List<Tarjeta>> getAllTarjeta() throws IOException {
 
 		List<Tarjeta> list = tarjetaRepository.findByUserIsCurrentUser();
