@@ -81,6 +81,7 @@ public class ClienteResource {
         URISyntaxException {
         Cliente a = clienteService.crearCliente(clienteDTO);
         clienteDTO.setId(a.getId());
+        clienteDTO.setUser(a.getUser());
         return ResponseEntity.created(new URI("/api/clientes/" + a.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, a.getId().toString()))
             .body(clienteDTO);
