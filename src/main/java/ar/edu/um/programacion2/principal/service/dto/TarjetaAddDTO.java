@@ -1,6 +1,7 @@
 package ar.edu.um.programacion2.principal.service.dto;
 
 public class TarjetaAddDTO {
+    private Long id;
     private String nombre;
     private String apellido;
     private Integer seguridad;
@@ -20,8 +21,26 @@ public class TarjetaAddDTO {
         this.vencimiento = vencimiento;
         this.cliente_id = cliente_id;
     }
+    public TarjetaAddDTO(Long id,String nombre, String apellido, Integer seguridad, Long numero, Integer limite, String vencimiento, Long cliente_id) {
+        this.id = id;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.seguridad = seguridad;
+        this.numero = numero;
+        this.limite = limite;
+        this.vencimiento = vencimiento;
+        this.cliente_id = cliente_id;
+    }
+    
+    public Long getId() {
+		return id;
+	}
 
-    public String getNombre() {
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getNombre() {
         return nombre;
     }
 

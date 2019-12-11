@@ -106,21 +106,22 @@ public class TarjetaResource {
      * or with status {@code 400 (Bad Request)} if the tarjeta is not valid,
      * or with status {@code 500 (Internal Server Error)} if the tarjeta couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
+     * @throws IOException 
      */
-    @PutMapping("/tarjetas")
-    public ResponseEntity<Tarjeta> updateTarjeta(@Valid @RequestBody Tarjeta tarjeta) throws URISyntaxException {
+    @PutMapping("/tarjeta")
+    public ResponseEntity<Tarjeta> updateTarjeta(@Valid @RequestBody TarjetaAddDTO tarjeta) throws URISyntaxException, IOException {
         log.debug("REST request to update Tarjeta : {}", tarjeta);
         if (tarjeta.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
 
-        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
-            if (clienteRepository.findById(tarjeta.getCliente().getId()).get().getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId() || tarjeta.getCliente() == null) //seguridad
-                throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
-        if (tarjeta.getCliente() == null)
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "null cliente");
+//        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
+//            if (clienteRepository.findById(tarjeta.getCliente_id()).get().getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId() || tarjeta.getCliente() == null) //seguridad
+//                throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
+//        if (tarjeta.getCliente_id() == null)
+//            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "null cliente");
 
-        Tarjeta result = tarjetaRepository.save(tarjeta);
+        Tarjeta result = tarjetaService.editarTarjeta(tarjeta);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, tarjeta.getId().toString()))
             .body(result);
