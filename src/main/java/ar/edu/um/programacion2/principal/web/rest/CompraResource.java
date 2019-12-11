@@ -1,5 +1,6 @@
 package ar.edu.um.programacion2.principal.web.rest;
 
+import ar.edu.um.programacion2.principal.domain.Compra;
 import ar.edu.um.programacion2.principal.repository.TarjetaRepository;
 import ar.edu.um.programacion2.principal.repository.UserRepository;
 import ar.edu.um.programacion2.principal.security.AuthoritiesConstants;
@@ -35,7 +36,10 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class CompraResource {
     private final Logger log = LoggerFactory.getLogger(CompraResource.class);
+    private static final String ENTITY_NAME = "compra";
 
+    @Value("${jhipster.clientApp.name}")
+    private String applicationName;
     private final TarjetaRepository tarjetaRepository;
     private final UserRepository userRepository;
     private final CompraService compraService;
@@ -56,12 +60,14 @@ public class CompraResource {
         }
         return compraService.comprar(compraDTO);
     }
-    @GetMapping("/compras")
-    public ResponseEntity<List<CompraDTO>> getAllCompras() {
+    @GetMapping("/comprar")
+    public ResponseEntity<List<Compra>> getAllCompras() throws IOException {
         log.debug("REST request to get a page of Compras");
-        Page<CompraDTO> page = compraService.findByUserLogin(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId());
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        List<Compra> list = compraService.findAllByUserId();
+        System.out.println(list);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept","*/*");
+        return ResponseEntity.ok().headers(headers).body(list);
     }
 }
 

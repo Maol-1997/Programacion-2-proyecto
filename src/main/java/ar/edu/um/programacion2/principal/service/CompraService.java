@@ -1,5 +1,6 @@
 package ar.edu.um.programacion2.principal.service;
 
+import ar.edu.um.programacion2.principal.domain.Cliente;
 import ar.edu.um.programacion2.principal.domain.Compra;
 import ar.edu.um.programacion2.principal.repository.ClienteRepository;
 import ar.edu.um.programacion2.principal.repository.CompraRepository;
@@ -19,46 +20,55 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 /**
- * Service Interface for managing {@link ar.edu.um.programacion2.principal.domain.Compra}.
+ * Service Interface for managing
+ * {@link ar.edu.um.programacion2.principal.domain.Compra}.
  */
 
 @Service
 public class CompraService {
-    private final CompraRepository compraRepository;
-    private final TarjetaRepository tarjetaRepository;
-    private final ClienteRepository clienteRepository;
-    private final UserRepository userRepository;
-public CompraService(CompraRepository compraRepository, TarjetaRepository tarjetaRepository, ClienteRepository clienteRepository, UserRepository userRepository) {
-        this.compraRepository = compraRepository;
-        this.tarjetaRepository = tarjetaRepository;
-        this.clienteRepository = clienteRepository;
-        this.userRepository = userRepository;
-    }
+	private final CompraRepository compraRepository;
+	private final TarjetaRepository tarjetaRepository;
+	private final ClienteRepository clienteRepository;
+	private final UserRepository userRepository;
 
-    public ResponseEntity<String> comprar(CompraDTO compraDTO) throws IOException {
-        TarjetaDTO tarjetaDTO = new TarjetaDTO(compraDTO.getToken(),compraDTO.getPrecio());
-        //return PostUtil.sendPost(tarjetaDTO.toString(),"http://127.0.0.1:8081/api/tarjeta/comprar");
-        HttpResponse response = PostUtil.sendPost(tarjetaDTO.toString(),"http://127.0.0.1:8081/api/tarjeta/comprar");
-        //No me gusta este metodo de  agarrar si mando un 200 (buscar alternativa)
-        if(response.getStatusLine().toString().contains("201")) {
-        	Compra compra = new Compra();
-        	compra.setCliente(tarjetaRepository.findByToken(compraDTO.getToken()).getCliente());
-        	compra.setDescripcion(compraDTO.getDescripcion());
-        	compra.setPrecio(compraDTO.getPrecio());
-        	compra.setUsurio(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get());
-        	compra.setTarjeta(tarjetaRepository.findByToken(compraDTO.getToken()));
-        	Compra result = compraRepository.save(compra);
-        	return new ResponseEntity<String>(EntityUtils.toString(response.getEntity(), "UTF-8"), HttpStatus.OK);
-        }
-        else{
-        	return new ResponseEntity<String>(EntityUtils.toString(response.getEntity(), "UTF-8"), HttpStatus.FORBIDDEN);
-        }
-    }
+	public CompraService(CompraRepository compraRepository, TarjetaRepository tarjetaRepository,
+			ClienteRepository clienteRepository, UserRepository userRepository) {
+		this.compraRepository = compraRepository;
+		this.tarjetaRepository = tarjetaRepository;
+		this.clienteRepository = clienteRepository;
+		this.userRepository = userRepository;
+	}
+
+	public ResponseEntity<String> comprar(CompraDTO compraDTO) throws IOException {
+		TarjetaDTO tarjetaDTO = new TarjetaDTO(compraDTO.getToken(), compraDTO.getPrecio());
+		// return
+		// PostUtil.sendPost(tarjetaDTO.toString(),"http://127.0.0.1:8081/api/tarjeta/comprar");
+		HttpResponse response = PostUtil.sendPost(tarjetaDTO.toString(), "http://127.0.0.1:8081/api/tarjeta/comprar");
+		// No me gusta este metodo de agarrar si mando un 200 (buscar alternativa)
+		if (response.getStatusLine().toString().contains("201")) {
+			Compra compra = new Compra();
+			compra.setCliente(tarjetaRepository.findByToken(compraDTO.getToken()).getCliente());
+			compra.setDescripcion(compraDTO.getDescripcion());
+			compra.setPrecio(compraDTO.getPrecio());
+			compra.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get());
+			compra.setTarjeta(tarjetaRepository.findByToken(compraDTO.getToken()));
+			Compra result = compraRepository.save(compra);
+			return new ResponseEntity<String>(EntityUtils.toString(response.getEntity(), "UTF-8"), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<String>(EntityUtils.toString(response.getEntity(), "UTF-8"),
+					HttpStatus.FORBIDDEN);
+		}
+	}
+
+	public List<Compra> findAllByUserId() throws IOException {
+        List<Compra> list = compraRepository.findAllByUserId();
+		return list;
+	}
 }
-
 //public interface CompraService {
 //
 //    /**
