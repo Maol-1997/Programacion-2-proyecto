@@ -35,38 +35,36 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api")
 public class CompraResource {
-    private final Logger log = LoggerFactory.getLogger(CompraResource.class);
-    private static final String ENTITY_NAME = "compra";
+	private final Logger log = LoggerFactory.getLogger(CompraResource.class);
+	private static final String ENTITY_NAME = "compra";
 
-    @Value("${jhipster.clientApp.name}")
-    private String applicationName;
-    private final TarjetaRepository tarjetaRepository;
-    private final UserRepository userRepository;
-    private final CompraService compraService;
-    public CompraResource(TarjetaRepository tarjetaRepository, CompraService compraService, UserRepository userRepository ) {
+	@Value("${jhipster.clientApp.name}")
+	private String applicationName;
+	private final TarjetaRepository tarjetaRepository;
+	private final UserRepository userRepository;
+	private final CompraService compraService;
 
-        this.tarjetaRepository = tarjetaRepository;
-        this.userRepository = userRepository;
-        this.compraService = compraService;
-    }
+	public CompraResource(TarjetaRepository tarjetaRepository, CompraService compraService,
+			UserRepository userRepository) {
 
-    @PostMapping("/comprar")
-    public ResponseEntity<String> comprar(@RequestBody CompraDTO compraDTO) throws IOException {
-        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
-            if (compraDTO.getToken() == null || compraDTO.getPrecio() == null)
-                throw new BadRequestAlertException("falta token y/o monto", "tarjeta", "missing parameters");
-            if (tarjetaRepository.findByToken(compraDTO.getToken()).getCliente().getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId())
-                throw new BadRequestAlertException("No te pertenece ese cliente", "tarjeta", "prohibido");
-        }
-        return compraService.comprar(compraDTO);
-    }
-    @GetMapping("/comprar")
-    public ResponseEntity<List<Compra>> getAllCompras() throws IOException {
-        log.debug("REST request to get a page of Compras");
-//        List<Compra> list = compraService.findAllByUserId();
-//        System.out.println(list);
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept","*/*");
-        return ResponseEntity.ok().headers(headers).body(compraService.findAllByUserId());
-    }
+		this.tarjetaRepository = tarjetaRepository;
+		this.userRepository = userRepository;
+		this.compraService = compraService;
+	}
+
+	@PostMapping("/comprar")
+	public ResponseEntity<String> comprar(@RequestBody CompraDTO compraDTO) throws IOException {
+		return compraService.comprar(compraDTO);
+	}
+
+	@GetMapping("/comprar")
+	public ResponseEntity<List<Compra>> getAllCompras() throws IOException {
+		log.debug("REST request to get a page of Compras");
+		return compraService.findAllByUserId();
+	}
+//	@GetMapping("/comprar/{id}")
+//	public ResponseEntity<List<Compra>> getCompra(@PathVariable Long id) throws IOException {
+//		log.debug("REST request to get one Compra");
+//		return compraService.findByUserId(id);
+//	}
 }
