@@ -18,7 +18,7 @@ public class PostUtil {
         boolean flag;
         boolean port;
         do {
-            port = url.contains("8080");
+            port = url.contains("8081");
             	
             StringEntity entity = new StringEntity(payload,
                 ContentType.APPLICATION_JSON);

@@ -9,6 +9,7 @@ import ar.edu.um.programacion2.principal.repository.UserRepository;
 import ar.edu.um.programacion2.principal.security.AuthoritiesConstants;
 import ar.edu.um.programacion2.principal.security.SecurityUtils;
 import ar.edu.um.programacion2.principal.service.dto.CompraDTO;
+import ar.edu.um.programacion2.principal.service.dto.LogDTO;
 import ar.edu.um.programacion2.principal.service.dto.TarjetaDTO;
 import ar.edu.um.programacion2.principal.service.util.PostUtil;
 import ar.edu.um.programacion2.principal.web.rest.errors.BadRequestAlertException;
@@ -47,15 +48,18 @@ public class CompraService {
 		this.userRepository = userRepository;
 	}
 
-	public ResponseEntity<String> comprar(CompraDTO compraDTO) throws IOException {
+	public ResponseEntity<String> comprar(CompraDTO compraDTO) throws IOException {			
 		// if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
 		if (compraDTO.getToken() == null || compraDTO.getPrecio() == null)
 			throw new BadRequestAlertException("falta token y/o monto", "tarjeta", "missing parameters");
 		if (tarjetaRepository.findByToken(compraDTO.getToken()).getCliente().getUser().getId() != userRepository
 				.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId())
 			throw new BadRequestAlertException("No te pertenece ese cliente", "tarjeta", "prohibido");
-		if (tarjetaRepository.findByToken(compraDTO.getToken()).isAlta() != true)
+		if (tarjetaRepository.findByToken(compraDTO.getToken()).isAlta() != true) {
+			LogDTO logDTO = new LogDTO("Verificacion tarjeta","Tarjeta inactiva","FALLO");		
+			HttpResponse responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/tarjeta/comprar");
 			throw new BadRequestAlertException("La Tarjeta esta dada de baja", "tarjeta", "prohibido");
+		}
 
 		// }
 		TarjetaDTO tarjetaDTO = new TarjetaDTO(compraDTO.getToken(), compraDTO.getPrecio());
