@@ -65,7 +65,7 @@ public class CompraService {
 		TarjetaDTO tarjetaDTO = new TarjetaDTO(compraDTO.getToken(), compraDTO.getPrecio());
 		// return
 		// PostUtil.sendPost(tarjetaDTO.toString(),"http://127.0.0.1:8081/api/tarjeta/comprar");
-		HttpResponse response = PostUtil.sendPost(tarjetaDTO.toString(), "http://127.0.0.1:8081/api/tarjeta/comprar");
+		HttpResponse response = PostUtil.sendPost(tarjetaDTO.toString(), "http://127.0.0.1:8081/api/log");
 		// No me gusta este metodo de agarrar si mando un 200 (buscar alternativa)
 		if (response.getStatusLine().toString().contains("201")) {
 			Compra compra = new Compra();
