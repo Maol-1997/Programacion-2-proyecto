@@ -1,4 +1,4 @@
-package ar.edu.um.programacion2.tarjetas;
+package ar.edu.um.programacion2.logs;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,9 +11,9 @@ import org.springframework.web.filter.CorsFilter;
 
 @ServletComponentScan
 @SpringBootApplication
-public class TarjetasApplication {
+public class LogsApplication {
     public static void main(String[] args) {
-        SpringApplication.run(TarjetasApplication.class, args);
+        SpringApplication.run(LogsApplication.class, args);
     }
     @Bean
     public FilterRegistrationBean corsFilter() {

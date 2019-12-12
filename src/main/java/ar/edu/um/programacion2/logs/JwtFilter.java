@@ -1,4 +1,4 @@
-package ar.edu.um.programacion2.tarjetas;
+package ar.edu.um.programacion2.logs;
 
 
 import io.jsonwebtoken.Claims;

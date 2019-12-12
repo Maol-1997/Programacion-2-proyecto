@@ -1,7 +1,7 @@
-package ar.edu.um.programacion2.tarjetas.controller;
+package ar.edu.um.programacion2.logs.controller;
 
-import ar.edu.um.programacion2.tarjetas.model.User;
-import ar.edu.um.programacion2.tarjetas.service.UserService;
+import ar.edu.um.programacion2.logs.model.User;
+import ar.edu.um.programacion2.logs.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

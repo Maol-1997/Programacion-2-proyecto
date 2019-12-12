@@ -1,4 +1,4 @@
-package ar.edu.um.programacion2.tarjetas.exceptions;
+package ar.edu.um.programacion2.logs.exceptions;
 
 public class UserNotFoundException extends RuntimeException {
 

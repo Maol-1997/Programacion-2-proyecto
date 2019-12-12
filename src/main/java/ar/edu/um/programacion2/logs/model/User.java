@@ -1,4 +1,4 @@
-package ar.edu.um.programacion2.tarjetas.model;
+package ar.edu.um.programacion2.logs.model;
 
 import lombok.Data;
 

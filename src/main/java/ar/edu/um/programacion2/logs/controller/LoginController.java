@@ -1,7 +1,7 @@
-package ar.edu.um.programacion2.tarjetas.controller;
+package ar.edu.um.programacion2.logs.controller;
 
-import ar.edu.um.programacion2.tarjetas.model.User;
-import ar.edu.um.programacion2.tarjetas.service.UserService;
+import ar.edu.um.programacion2.logs.model.User;
+import ar.edu.um.programacion2.logs.service.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.TextCodec;

@@ -1,8 +1,8 @@
-package ar.edu.um.programacion2.tarjetas.service;
+package ar.edu.um.programacion2.logs.service;
 
-import ar.edu.um.programacion2.tarjetas.Repository.IUserRepository;
-import ar.edu.um.programacion2.tarjetas.exceptions.UserNotFoundException;
-import ar.edu.um.programacion2.tarjetas.model.User;
+import ar.edu.um.programacion2.logs.Repository.IUserRepository;
+import ar.edu.um.programacion2.logs.exceptions.UserNotFoundException;
+import ar.edu.um.programacion2.logs.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
