@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -125,7 +126,7 @@ public class TarjetaResource {
 	}
 
 	@GetMapping("/tarjeta/token/{token}")
-	public ResponseEntity<Tarjeta> getTarjetaByToken(@PathVariable String token) throws IOException {
+	public ResponseEntity<Map<String, Long>> getTarjetaByToken(@PathVariable String token) throws IOException {
 		log.debug("REST request to get Tarjeta : {}", token);
 		return tarjetaService.findTarjetaByToken(token);
 	}

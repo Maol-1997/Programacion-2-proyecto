@@ -16,7 +16,10 @@ public interface TarjetaRepository extends JpaRepository<Tarjeta, Long> {
     @Query("select tarjeta from Tarjeta tarjeta where tarjeta.cliente.user.login = ?#{principal.username}")
     List<Tarjeta> findByUserIsCurrentUser();
 
-    Optional<Tarjeta> findByToken(String token);
-
+    Tarjeta findByToken(String token);
+    
+    @Query("select tarjeta from Tarjeta tarjeta where tarjeta.token = ?1")
+    Optional<Tarjeta> findByTokenOpt(String token);
+    
 	Tarjeta save(Optional<Tarjeta> tarjeta);
 }

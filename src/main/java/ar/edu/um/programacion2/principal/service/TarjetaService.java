@@ -26,7 +26,9 @@ import org.springframework.web.servlet.resource.HttpResource;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -123,14 +125,24 @@ public class TarjetaService {
 		return ResponseUtil.wrapOrNotFound(result);
 	}
 
-	public ResponseEntity<Tarjeta> findTarjetaByToken(String token) throws IOException {
+	public ResponseEntity<Map<String, Long>> findTarjetaByToken(String token) throws IOException {
 		// if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
-		if (tarjetaRepository.findByToken(token).get().getCliente().getUser().getId() != userRepository
+		if (tarjetaRepository.findByTokenOpt(token).get().getCliente().getUser().getId() != userRepository
 				.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
 			throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
 
-		Optional<Tarjeta> result = tarjetaRepository.findByToken(token);
-		return ResponseUtil.wrapOrNotFound(result);
+		Optional<Tarjeta> result = tarjetaRepository.findByTokenOpt(token);
+		System.out.println(result);
+		System.out.println(token);
+		Map<String, Long> tarjeta = new HashMap<String, Long>();
+		System.out.println(tarjeta);
+
+		tarjeta.put("id", result.get().getId());
+		System.out.println(tarjeta);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Accept", "*/*");
+		return ResponseEntity.ok().headers(headers).body(tarjeta);
 	}
 
 	public ResponseEntity<List<Tarjeta>> getAllTarjeta() throws IOException {
