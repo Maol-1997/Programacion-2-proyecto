@@ -63,14 +63,6 @@ public class TarjetaResource {
 	}
 
 
-	/**
-	 * {@code POST  /tarjetas} : Create a new tarjeta.
-	 *
-	 * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with
-	 *         body the new tarjeta, or with status {@code 400 (Bad Request)} if the
-	 *         tarjeta has already an ID.
-	 * @throws URISyntaxException if the Location URI syntax is incorrect.
-	 */
 	@PostMapping("/tarjeta")
 	public ResponseEntity<Tarjeta> añadirTarjeta(@RequestBody TarjetaAddDTO tarjetaAddDTO)
 			throws IOException, URISyntaxException {
@@ -79,7 +71,7 @@ public class TarjetaResource {
 	}
 
 	/**
-	 * {@code PUT  /tarjetas} : Updates an existing tarjeta.
+	 * {@code PUT  /tarjeta} : Updates an existing tarjeta.
 	 *
 	 * @param tarjeta the tarjeta to update.
 	 * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
@@ -98,7 +90,7 @@ public class TarjetaResource {
 	}
 
 	/**
-	 * {@code GET  /tarjetas} : get all the tarjetas.
+	 * {@code GET  /tarjeta} : get all the tarjeta.
 	 *
 	 * @param pageable the pagination information.
 	 * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list
@@ -112,7 +104,7 @@ public class TarjetaResource {
 	}
 
 	/**
-	 * {@code GET  /tarjetas/:id} : get the "id" tarjeta.
+	 * {@code GET  /tarjeta/:id} : get the "id" tarjeta.
 	 *
 	 * @param id the id of the tarjeta to retrieve.
 	 * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body

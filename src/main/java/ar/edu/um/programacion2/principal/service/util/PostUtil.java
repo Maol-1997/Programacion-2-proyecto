@@ -28,11 +28,14 @@ public class PostUtil {
             request.setEntity(entity);
             response = httpClient.execute(request);
             flag = response.getStatusLine().toString().contains("401");
+        	System.out.println(flag);
+        	System.out.println(port);
+
             if(flag) {
                 if(port) {
-                	getJwt(8080);
-                } else {
                 	getJwt(8081);
+                } else {
+                	getJwt(8082);
                 }
             }
         }while(flag);
@@ -49,6 +52,7 @@ public class PostUtil {
             ContentType.APPLICATION_JSON);
 
         HttpClient httpClient = HttpClientBuilder.create().build();
+        System.out.println("http://127.0.0.1:"+port+"/login/");
         HttpPost request = new HttpPost("http://127.0.0.1:"+port+"/login/");
         request.setEntity(entity);
         HttpResponse response = httpClient.execute(request);

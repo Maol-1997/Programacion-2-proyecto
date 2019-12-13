@@ -30,6 +30,10 @@ public class Compra implements Serializable {
     @Column(name = "descripcion", nullable = false)
     private String descripcion;
 
+    @NotNull
+    @Column(name = "valido", nullable = false)
+    private Boolean valido;
+
     @ManyToOne
     @JsonIgnoreProperties("compras")
     private Cliente cliente;
@@ -49,7 +53,15 @@ public class Compra implements Serializable {
         return id;
     }
 
-    public User getUser() {
+    public Boolean getValido() {
+		return valido;
+	}
+
+	public void setValido(Boolean valido) {
+		this.valido = valido;
+	}
+
+	public User getUser() {
 		return user;
 	}
 

@@ -22,6 +22,9 @@
             <column name="descripcion" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
+            <column name="valido" type="boolean">
+                <constraints nullable="false" />
+            </column>
             <column name="tarjeta_id" type="bigint">
                 <constraints nullable="false" />
             </column>

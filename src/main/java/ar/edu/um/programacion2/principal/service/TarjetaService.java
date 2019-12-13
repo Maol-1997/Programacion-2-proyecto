@@ -59,9 +59,11 @@ public class TarjetaService {
 				|| tarjetaAddDTO.getSeguridad() == null || tarjetaAddDTO.getCliente_id() == null)
 			throw new BadRequestAlertException("faltan parametros", "tarjeta", "missing parameters");
 		// }
+		System.out.println("Llego");
 
 		String ult4 = String.valueOf(tarjetaAddDTO.getNumero())
 				.substring(String.valueOf(tarjetaAddDTO.getNumero()).length() - 4);
+		System.out.println("Llego");
 
 		HttpResponse response = PostUtil.sendPost(tarjetaAddDTO.toString(), "http://127.0.0.1:8081/api/tarjeta/");
 		String token = EntityUtils.toString(response.getEntity(), "UTF-8");

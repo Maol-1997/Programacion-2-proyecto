@@ -48,7 +48,7 @@ public class CompraService {
 		this.userRepository = userRepository;
 	}
 
-	public ResponseEntity<String> comprar(CompraDTO compraDTO) throws IOException {			
+	public ResponseEntity<String> comprar(CompraDTO compraDTO) throws IOException {
 		// if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
 		if (compraDTO.getToken() == null || compraDTO.getPrecio() == null)
 			throw new BadRequestAlertException("falta token y/o monto", "tarjeta", "missing parameters");
@@ -56,8 +56,9 @@ public class CompraService {
 				.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId())
 			throw new BadRequestAlertException("No te pertenece ese cliente", "tarjeta", "prohibido");
 		if (tarjetaRepository.findByToken(compraDTO.getToken()).isAlta() != true) {
-			LogDTO logDTO = new LogDTO("Verificacion tarjeta","Tarjeta inactiva","FALLO");		
-			HttpResponse responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/tarjeta/comprar");
+			LogDTO logDTO = new LogDTO("Verificacion tarjeta", "Tarjeta inactiva", "FALLO");
+			HttpResponse responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
+			System.out.println(responseLog);
 			throw new BadRequestAlertException("La Tarjeta esta dada de baja", "tarjeta", "prohibido");
 		}
 
@@ -65,18 +66,22 @@ public class CompraService {
 		TarjetaDTO tarjetaDTO = new TarjetaDTO(compraDTO.getToken(), compraDTO.getPrecio());
 		// return
 		// PostUtil.sendPost(tarjetaDTO.toString(),"http://127.0.0.1:8081/api/tarjeta/comprar");
-		HttpResponse response = PostUtil.sendPost(tarjetaDTO.toString(), "http://127.0.0.1:8081/api/log");
+		HttpResponse response = PostUtil.sendPost(tarjetaDTO.toString(), "http://127.0.0.1:8081/api/tarjeta/comprar");
 		// No me gusta este metodo de agarrar si mando un 200 (buscar alternativa)
+
+		Compra compra = new Compra();
+		compra.setCliente(tarjetaRepository.findByToken(compraDTO.getToken()).getCliente());
+		compra.setDescripcion(compraDTO.getDescripcion());
+		compra.setPrecio(compraDTO.getPrecio());
+		compra.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get());
+		compra.setTarjeta(tarjetaRepository.findByToken(compraDTO.getToken()));
 		if (response.getStatusLine().toString().contains("201")) {
-			Compra compra = new Compra();
-			compra.setCliente(tarjetaRepository.findByToken(compraDTO.getToken()).getCliente());
-			compra.setDescripcion(compraDTO.getDescripcion());
-			compra.setPrecio(compraDTO.getPrecio());
-			compra.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get());
-			compra.setTarjeta(tarjetaRepository.findByToken(compraDTO.getToken()));
+			compra.setValido(true);
 			Compra result = compraRepository.save(compra);
 			return new ResponseEntity<String>(EntityUtils.toString(response.getEntity(), "UTF-8"), HttpStatus.OK);
 		} else {
+			compra.setValido(false);
+			Compra result = compraRepository.save(compra);
 			return new ResponseEntity<String>(EntityUtils.toString(response.getEntity(), "UTF-8"),
 					HttpStatus.FORBIDDEN);
 		}
@@ -88,7 +93,7 @@ public class CompraService {
 		headers.set("Accept", "*/*");
 		return ResponseEntity.ok().headers(headers).body(list);
 	}
-	
+
 }
 //public interface CompraService {
 //
