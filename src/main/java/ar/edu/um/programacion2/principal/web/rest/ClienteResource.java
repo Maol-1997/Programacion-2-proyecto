@@ -75,6 +75,10 @@ public class ClienteResource {
     public ResponseEntity<Cliente> obtCliente(@PathVariable Long id) {
         return clienteService.getCliente(id);
     }
+    @DeleteMapping("/cliente/{id}")
+    public ResponseEntity<Cliente> deleteCliente(@PathVariable Long id) {
+        return clienteService.getCliente(id);
+    }
 
 //    /**
 //     * {@code POST  /clientes} : Create a new cliente.

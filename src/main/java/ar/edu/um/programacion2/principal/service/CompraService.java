@@ -53,7 +53,7 @@ public class CompraService {
 		this.userRepository = userRepository;
 	}
 
-	public ResponseEntity<String> comprar(CompraDTO compraDTO) throws IOException {
+	public ResponseEntity<Compra> comprar(CompraDTO compraDTO) throws IOException {
 		// if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
 		if (compraDTO.getToken() == null || compraDTO.getPrecio() == null)
 			throw new BadRequestAlertException("falta token y/o monto", "tarjeta", "missing parameters");
@@ -82,7 +82,9 @@ public class CompraService {
 			LogDTO logDTO = new LogDTO("Verificar Tarjeta",
 					EntityUtils.toString(verificacionTarjeta.getEntity(), "UTF-8"), "FALLO", result.getId());
 			HttpResponse responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
-			return new ResponseEntity<String>(logDTO.getExplicacion(), HttpStatus.FORBIDDEN);
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("Accept", "*/*");
+			return ResponseEntity.ok().headers(headers).body(result);
 		} else if ((verificacionMonto = PostUtil.sendPost(tarjetaDTO.toString(),
 				"http://127.0.0.1:8081/api/tarjeta/comprar")).getStatusLine().getStatusCode() != 201) {
 			compra.setValido(false);
@@ -92,7 +94,9 @@ public class CompraService {
 			System.out.println(logDTO);
 			HttpResponse responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
 			System.out.println(responseLog);
-			return new ResponseEntity<String>(logDTO.toString(), HttpStatus.FORBIDDEN);
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("Accept", "*/*");
+			return ResponseEntity.ok().headers(headers).body(result);
 		} else {
 			compra.setValido(true);
 			Compra result = compraRepository.save(compra);
@@ -105,7 +109,7 @@ public class CompraService {
 			responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Accept", "*/*");
-			return ResponseEntity.ok().headers(headers).body(result.toString());
+			return ResponseEntity.ok().headers(headers).body(result);
 		}
 	}
 
