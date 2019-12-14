@@ -79,28 +79,29 @@ public class CompraService {
 				"http://127.0.0.1:8081/api/tarjeta/tarjeta")).getStatusLine().getStatusCode() != 201) {
 			compra.setValido(false);
 			Compra result = compraRepository.save(compra);
-			LogDTO logDTO = new LogDTO("Verificar Tarjeta", EntityUtils.toString(verificacionTarjeta.getEntity(), "UTF-8"), "FALLO",result.getId());
+			LogDTO logDTO = new LogDTO("Verificar Tarjeta",
+					EntityUtils.toString(verificacionTarjeta.getEntity(), "UTF-8"), "FALLO", result.getId());
 			HttpResponse responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
-			return new ResponseEntity<String>(logDTO.getExplicacion(),
-					HttpStatus.FORBIDDEN);
+			return new ResponseEntity<String>(logDTO.getExplicacion(), HttpStatus.FORBIDDEN);
 		} else if ((verificacionMonto = PostUtil.sendPost(tarjetaDTO.toString(),
 				"http://127.0.0.1:8081/api/tarjeta/comprar")).getStatusLine().getStatusCode() != 201) {
 			compra.setValido(false);
 			Compra result = compraRepository.save(compra);
-			LogDTO logDTO = new LogDTO("Verificar Monto", EntityUtils.toString(verificacionMonto.getEntity(), "UTF-8"), "FALLO",result.getId());
+			LogDTO logDTO = new LogDTO("Verificar Monto", EntityUtils.toString(verificacionMonto.getEntity(), "UTF-8"),
+					"FALLO", result.getId());
 			System.out.println(logDTO);
 			HttpResponse responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
 			System.out.println(responseLog);
-			return new ResponseEntity<String>(EntityUtils.toString(verificacionMonto.getEntity(), "UTF-8"),
-					HttpStatus.FORBIDDEN);
+			return new ResponseEntity<String>(logDTO.toString(), HttpStatus.FORBIDDEN);
 		} else {
 			compra.setValido(true);
 			Compra result = compraRepository.save(compra);
-			LogDTO logDTO = new LogDTO("Verificar Tarjeta", verificacionTarjeta.getEntity().toString(), "OK",result.getId());
+			LogDTO logDTO = new LogDTO("Verificar Tarjeta", verificacionTarjeta.getEntity().toString(), "OK",
+					result.getId());
 			HttpResponse responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
-			logDTO = new LogDTO("Verificar Monto", verificacionMonto.getEntity().toString(), "OK",result.getId());
+			logDTO = new LogDTO("Verificar Monto", verificacionMonto.getEntity().toString(), "OK", result.getId());
 			responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
-			logDTO = new LogDTO("Confirmacion Venta","La venta se realizo con exito", "OK",result.getId());
+			logDTO = new LogDTO("Confirmacion Venta", "La venta se realizo con exito", "OK", result.getId());
 			responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Accept", "*/*");
@@ -116,4 +117,3 @@ public class CompraService {
 	}
 
 }
-
