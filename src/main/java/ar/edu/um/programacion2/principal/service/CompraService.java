@@ -17,6 +17,7 @@ import ar.edu.um.programacion2.principal.web.rest.errors.BadRequestAlertExceptio
 import com.netflix.ribbon.proxy.annotation.Http;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -35,9 +36,13 @@ import java.util.Optional;
 
 @Service
 public class CompraService {
+	@Autowired
 	private final CompraRepository compraRepository;
+	@Autowired
 	private final TarjetaRepository tarjetaRepository;
+	@Autowired
 	private final ClienteRepository clienteRepository;
+	@Autowired
 	private final UserRepository userRepository;
 
 	public CompraService(CompraRepository compraRepository, TarjetaRepository tarjetaRepository,
@@ -55,17 +60,20 @@ public class CompraService {
 		if (tarjetaRepository.findByToken(compraDTO.getToken()).getCliente().getUser().getId() != userRepository
 				.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId())
 			throw new BadRequestAlertException("No te pertenece ese cliente", "tarjeta", "prohibido");
-		if (tarjetaRepository.findByToken(compraDTO.getToken()).isAlta() != true) {
-			LogDTO logDTO = new LogDTO("Verificacion tarjeta", "Tarjeta inactiva", "FALLO");
-			HttpResponse responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
-			System.out.println(responseLog);
+		if (tarjetaRepository.findByTokenOpt(compraDTO.getToken()).get().isAlta() != true) {
 			throw new BadRequestAlertException("La Tarjeta esta dada de baja", "tarjeta", "prohibido");
 		}
 
 		// }
 		TarjetaDTO tarjetaDTO = new TarjetaDTO(compraDTO.getToken(), compraDTO.getPrecio());
-		// return
-		// PostUtil.sendPost(tarjetaDTO.toString(),"http://127.0.0.1:8081/api/tarjeta/comprar");
+		HttpResponse verificacionTarjeta = PostUtil.sendPost(tarjetaDTO.toString(),
+				"http://127.0.0.1:8081/api/tarjeta/tarjeta");
+		//System.out.println("Verificacion Tarjeta");
+		//System.out.println(verificacionTarjeta.getStatusLine().getStatusCode());
+		HttpResponse verificacionMonto = PostUtil.sendPost(tarjetaDTO.toString(),
+				"http://127.0.0.1:8081/api/tarjeta/monto");
+		//System.out.println("Verificacion Monto");
+		//System.out.println(verificacionMonto.getStatusLine());
 		HttpResponse response = PostUtil.sendPost(tarjetaDTO.toString(), "http://127.0.0.1:8081/api/tarjeta/comprar");
 		// No me gusta este metodo de agarrar si mando un 200 (buscar alternativa)
 
@@ -75,9 +83,12 @@ public class CompraService {
 		compra.setPrecio(compraDTO.getPrecio());
 		compra.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get());
 		compra.setTarjeta(tarjetaRepository.findByToken(compraDTO.getToken()));
-		if (response.getStatusLine().toString().contains("201")) {
+		if (response.getStatusLine().getStatusCode() == 201) {
 			compra.setValido(true);
 			Compra result = compraRepository.save(compra);
+//			LogDTO logDTO = new LogDTO("Guardar Compra", "Se realizo la compra correctamente", "OK",result.getId());
+//			HttpResponse responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
+//			System.out.println(responseLog);
 			return new ResponseEntity<String>(EntityUtils.toString(response.getEntity(), "UTF-8"), HttpStatus.OK);
 		} else {
 			compra.setValido(false);
