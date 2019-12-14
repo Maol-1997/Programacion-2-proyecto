@@ -51,7 +51,7 @@ public class LogDTO {
 
 	@Override
     public String toString() {
-        return "{\"descipcion\": \"" + getDescripcion() + "\"," +
+        return "{\"descripcion\": \"" + getDescripcion() + "\"," +
             "\"explicacion\": \"" + getExplicacion() + "\"," +
             "\"resultado\": \"" + getResultado() + "\"," +
             "\"venta\": " + getVenta() + "}";
