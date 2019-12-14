@@ -46,6 +46,7 @@ public class CompraService {
         this.userRepository = userRepository;
     }
 
+<<<<<<< Updated upstream
     public ResponseEntity<String> comprar(CompraDTO compraDTO) throws IOException {
         if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
             if (compraDTO.getToken() == null || compraDTO.getPrecio() == null)
@@ -82,6 +83,45 @@ public class CompraService {
                 HttpStatus.FORBIDDEN);
         }
     }
+=======
+		// }
+		TarjetaDTO tarjetaDTO = new TarjetaDTO(compraDTO.getToken(), compraDTO.getPrecio());
+
+		Compra compra = new Compra();
+		compra.setCliente(tarjetaRepository.findByToken(compraDTO.getToken()).getCliente());
+		compra.setDescripcion(compraDTO.getDescripcion());
+		compra.setPrecio(compraDTO.getPrecio());
+		compra.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get());
+		compra.setTarjeta(tarjetaRepository.findByToken(compraDTO.getToken()));
+		HttpResponse verificacionTarjeta;
+		HttpResponse verificacionMonto;
+		if ((verificacionTarjeta = PostUtil.sendPost(tarjetaDTO.toString(),
+				"http://127.0.0.1:8081/api/tarjeta/tarjeta")).getStatusLine().getStatusCode() != 201) {
+			compra.setValido(false);
+			Compra result = compraRepository.save(compra);
+			LogDTO logDTO = new LogDTO("Verificar Tarjeta", EntityUtils.toString(verificacionTarjeta.getEntity(), "UTF-8"), "FALLO",result.getId());
+			HttpResponse responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
+			return new ResponseEntity<String>(logDTO.getExplicacion(),
+					HttpStatus.FORBIDDEN);
+		} else if ((verificacionMonto = PostUtil.sendPost(tarjetaDTO.toString(),
+				"http://127.0.0.1:8081/api/tarjeta/comprar")).getStatusLine().getStatusCode() != 201) {
+			compra.setValido(false);
+			Compra result = compraRepository.save(compra);
+			LogDTO logDTO = new LogDTO("Verificar Monto", verificacionTarjeta.getEntity().toString(), "FALLO",result.getId());
+			System.out.println(logDTO);
+			HttpResponse responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
+			System.out.println(responseLog);
+			return new ResponseEntity<String>(EntityUtils.toString(verificacionMonto.getEntity(), "UTF-8"),
+					HttpStatus.FORBIDDEN);
+		} else {
+			compra.setValido(true);
+			Compra result = compraRepository.save(compra);
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("Accept", "*/*");
+			return ResponseEntity.ok().headers(headers).body(result.toString());
+		}
+	}
+>>>>>>> Stashed changes
 
     public ResponseEntity<List<Compra>> findAllByUserId() throws IOException {
         List<Compra> list = compraRepository.findAllByUserId();
@@ -91,37 +131,4 @@ public class CompraService {
     }
 
 }
-//public interface CompraService {
-//
-//    /**
-//     * Save a compra.
-//     *
-//     * @param compraDTO the entity to save.
-//     * @return the persisted entity.
-//     */
-//    CompraDTO save(CompraDTO compraDTO);
-//
-//    /**
-//     * Get all the compras.
-//     *
-//     * @param pageable the pagination information.
-//     * @return the list of entities.
-//     */
-//    Page<CompraDTO> findAll(Pageable pageable);
-//
-//
-//    /**
-//     * Get the "id" compra.
-//     *
-//     * @param id the id of the entity.
-//     * @return the entity.
-//     */
-//    Optional<CompraDTO> findOne(Long id);
-//
-//    /**
-//     * Delete the "id" compra.
-//     *
-//     * @param id the id of the entity.
-//     */
-//    void delete(Long id);
-//}
+
