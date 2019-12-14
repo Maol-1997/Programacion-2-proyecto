@@ -53,7 +53,7 @@ public class CompraResource {
 	}
 
 	@PostMapping("/comprar")
-	public ResponseEntity<String> comprar(@RequestBody CompraDTO compraDTO) throws IOException {
+	public ResponseEntity<Compra> comprar(@RequestBody CompraDTO compraDTO) throws IOException {
 		return compraService.comprar(compraDTO);
 	}
 
