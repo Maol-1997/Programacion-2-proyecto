@@ -61,10 +61,10 @@ public class ClienteService {
 		if (clienteDTO.getId() == null) {
 			throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
 		}
-		// if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
-//		if (clienteDTO.getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get())
-//				.get().getId()) // seguridad
-//			throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
+		 if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
+		if (clienteDTO.getUser().getId() != userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get())
+				.get().getId()) // seguridad
+			throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
 
 		Cliente cliente = new Cliente();
 		cliente.setId(clienteDTO.getId());

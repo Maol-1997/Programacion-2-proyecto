@@ -11,7 +11,8 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 
 public class PostUtil {
-    private static String jwt = ""; //JWT TOKEN
+    private static String jwt_log = ""; //JWT TOKEN LOGS
+    private static String jwt_tarjeta = ""; //JWT TOKEN TARJETAS
 
     public static HttpResponse sendPost(String payload, String url) throws IOException {
         HttpResponse response;
@@ -19,32 +20,26 @@ public class PostUtil {
         boolean port;
         do {
             port = url.contains("8081");
-            	
+
             StringEntity entity = new StringEntity(payload,
                 ContentType.APPLICATION_JSON);
             HttpClient httpClient = HttpClientBuilder.create().build();
             HttpPost request = new HttpPost(url);
-            request.addHeader("Authorization", "Bearer " + jwt);
+            if(port)
+                request.addHeader("Authorization", "Bearer " + jwt_tarjeta);
+            else
+                request.addHeader("Authorization", "Bearer " + jwt_log);
             request.setEntity(entity);
             response = httpClient.execute(request);
             flag = response.getStatusLine().toString().contains("401");
-        	System.out.println(flag);
-        	System.out.println(port);
-
             if(flag) {
-                if(port) {
-                	getJwt(8081);
-                } else {
-                	getJwt(8082);
-                }
+                getJwt(port);
             }
         }while(flag);
-
         return response;
-        //return EntityUtils.toString(response.getEntity(), "UTF-8");
     }
 
-    public static void getJwt(Integer port) throws IOException {
+    public static void getJwt(boolean port) throws IOException {
         StringEntity entity = new StringEntity("{\n" +
             "\"login\": \"system\",\n" +
             "\"pass\": \"system\"\n" +
@@ -52,10 +47,18 @@ public class PostUtil {
             ContentType.APPLICATION_JSON);
 
         HttpClient httpClient = HttpClientBuilder.create().build();
-        System.out.println("http://127.0.0.1:"+port+"/login/");
-        HttpPost request = new HttpPost("http://127.0.0.1:"+port+"/login/");
-        request.setEntity(entity);
-        HttpResponse response = httpClient.execute(request);
-        jwt = EntityUtils.toString(response.getEntity(),"UTF-8");
+        HttpPost request;
+        if(port) {
+            request = new HttpPost("http://127.0.0.1:8081/login/");
+            request.setEntity(entity);
+            HttpResponse response = httpClient.execute(request);
+            jwt_tarjeta = EntityUtils.toString(response.getEntity(),"UTF-8");
+        }
+        else {
+            request = new HttpPost("http://127.0.0.1:8082/login/");
+            request.setEntity(entity);
+            HttpResponse response = httpClient.execute(request);
+            jwt_log = EntityUtils.toString(response.getEntity(),"UTF-8");
+        }
     }
 }

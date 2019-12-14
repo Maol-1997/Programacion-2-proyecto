@@ -1,6 +1,5 @@
 package ar.edu.um.programacion2.principal.service;
 
-import ar.edu.um.programacion2.principal.domain.Compra;
 import ar.edu.um.programacion2.principal.domain.Tarjeta;
 import ar.edu.um.programacion2.principal.repository.ClienteRepository;
 import ar.edu.um.programacion2.principal.repository.TarjetaRepository;
@@ -8,20 +7,16 @@ import ar.edu.um.programacion2.principal.repository.UserRepository;
 import ar.edu.um.programacion2.principal.security.AuthoritiesConstants;
 import ar.edu.um.programacion2.principal.security.SecurityUtils;
 import ar.edu.um.programacion2.principal.service.dto.TarjetaAddDTO;
-import ar.edu.um.programacion2.principal.service.dto.TarjetaDTO;
 import ar.edu.um.programacion2.principal.service.util.PostUtil;
 import ar.edu.um.programacion2.principal.web.rest.errors.BadRequestAlertException;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
-
 import org.apache.http.HttpResponse;
-
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.resource.HttpResource;
 
 import java.io.IOException;
 import java.net.URI;
@@ -50,7 +45,7 @@ public class TarjetaService {
 	}
 
 	public ResponseEntity<Tarjeta> añadirTarjeta(TarjetaAddDTO tarjetaAddDTO) throws IOException, URISyntaxException {
-		// if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+		 if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
 		if (clienteRepository.findById(tarjetaAddDTO.getCliente_id()).get().getUser().getId() != userRepository
 				.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
 			throw new BadRequestAlertException("No te pertenece ese cliente", "tarjeta", "prohibido");
@@ -58,7 +53,7 @@ public class TarjetaService {
 				|| tarjetaAddDTO.getVencimiento() == null || tarjetaAddDTO.getNumero() == null
 				|| tarjetaAddDTO.getSeguridad() == null || tarjetaAddDTO.getCliente_id() == null)
 			throw new BadRequestAlertException("faltan parametros", "tarjeta", "missing parameters");
-		// }
+		 }
 		System.out.println("Llego");
 
 		String ult4 = String.valueOf(tarjetaAddDTO.getNumero())
@@ -82,7 +77,7 @@ public class TarjetaService {
 
 	public ResponseEntity<Tarjeta> editTarjeta(TarjetaAddDTO tarjetaAddDTO) throws IOException {
 
-		// if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+		 if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
 		if (clienteRepository.findById(tarjetaAddDTO.getCliente_id()).get().getUser().getId() != userRepository
 				.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
 			throw new BadRequestAlertException("No te pertenece ese cliente", "tarjeta", "prohibido");
@@ -96,7 +91,7 @@ public class TarjetaService {
 		if (tarjetaAddDTO.getId() == null) {
 			throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
 		}
-		// }
+		 }
 
 		String ult4 = String.valueOf(tarjetaAddDTO.getNumero())
 				.substring(String.valueOf(tarjetaAddDTO.getNumero()).length() - 4);
@@ -118,7 +113,7 @@ public class TarjetaService {
 	}
 
 	public ResponseEntity<Tarjeta> findTarjeta(Long id) throws IOException {
-		// if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
+		 if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
 		if (tarjetaRepository.findById(id).get().getCliente().getUser().getId() != userRepository
 				.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
 			throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
@@ -128,7 +123,7 @@ public class TarjetaService {
 	}
 
 	public ResponseEntity<Map<String, Long>> findTarjetaByToken(String token) throws IOException {
-		// if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
+		 if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
 		if (tarjetaRepository.findByTokenOpt(token).get().getCliente().getUser().getId() != userRepository
 				.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
 			throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
@@ -157,7 +152,7 @@ public class TarjetaService {
 	}
 
 	public ResponseEntity<Object> deleteById(Long id) throws IOException {
-		// if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
+		 if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
 		if (tarjetaRepository.findById(id).get().getCliente().getUser().getId() != userRepository
 				.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
 			throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
