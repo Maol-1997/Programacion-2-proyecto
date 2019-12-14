@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -62,8 +61,9 @@ public class TarjetaService {
         Tarjeta tarjeta = findByToken(tarjetaDTO.getToken());
         if(tarjeta == null)
             return new ResponseEntity<String>("Error, la tarjeta no existe en la DB", HttpStatus.NOT_FOUND);
-        Date today = new Date();
-        if(tarjetaDTO.getFecha().before(today))
+        LocalDate today = LocalDate.now();
+        String [] expira = tarjeta.getExpira().split("/");
+        if((today.getMonthValue() > Integer.valueOf(expira[0]) && today.getYear() >= Integer.valueOf(expira[1])))
             return new ResponseEntity<>("Tarjeta expirada",HttpStatus.FORBIDDEN);
 
         return new ResponseEntity<>("Verificacion Tarjeta realizada con exito",HttpStatus.CREATED);
