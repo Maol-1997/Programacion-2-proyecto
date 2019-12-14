@@ -1,25 +1,16 @@
 package ar.edu.um.programacion2.principal.service.dto;
 
 public class LogDTO {
-	private Long id;
 	private String descripcion;
 	private String explicacion;
 	private String resultado;
 	private Long venta;
-	
-	
+
+
 	public LogDTO() {
 		super();
 	}
-	
-	public LogDTO(Long id, String descripcion, String explicacion, String resultado, Long venta) {
-		super();
-		this.id = id;
-		this.descripcion = descripcion;
-		this.explicacion = explicacion;
-		this.resultado = resultado;
-		this.venta = venta;
-	}
+
 	public LogDTO(String descripcion, String explicacion, String resultado, Long venta) {
 		super();
 		this.descripcion = descripcion;
@@ -32,12 +23,6 @@ public class LogDTO {
 		this.descripcion = descripcion;
 		this.explicacion = explicacion;
 		this.resultado = resultado;
-	}
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
 	}
 	public String getDescripcion() {
 		return descripcion;
@@ -63,5 +48,12 @@ public class LogDTO {
 	public void setVenta(Long venta) {
 		this.venta = venta;
 	}
-	
+
+	@Override
+    public String toString() {
+        return "{\"descipcion\": \"" + getDescripcion() + "\"," +
+            "\"explicacion\": \"" + getExplicacion() + "\"," +
+            "\"resultado\": \"" + getResultado() + "\"," +
+            "\"venta\": " + getVenta() + "}";
+    }
 }
