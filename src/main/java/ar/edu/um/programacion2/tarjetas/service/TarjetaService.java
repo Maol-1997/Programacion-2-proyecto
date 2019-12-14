@@ -52,18 +52,30 @@ public class TarjetaService {
         Tarjeta tarjeta = findByToken(tarjetaDTO.getToken());
         if(tarjeta == null)
             return new ResponseEntity<String>("Error, la tarjeta no existe en la DB", HttpStatus.NOT_FOUND);
-        if(tarjeta.getLimite() < Integer.valueOf(tarjetaDTO.getMonto()))
-            return new ResponseEntity<>("La compra excede el limite de la tarjeta",HttpStatus.FORBIDDEN);
-
+        Random r = new Random();
+        if((r.nextInt((10 - 1) + 1) + 1) == 5 || (r.nextInt((10 - 1) + 1) + 1) == 6) //20% chances de saldo insuficiente
+            return new ResponseEntity<>("Saldo insuficiente",HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>("Operacion realizada con exito",HttpStatus.CREATED);
+    }
+    public ResponseEntity<String> verificarTarjeta(TarjetaDTO tarjetaDTO){
+        Tarjeta tarjeta = findByToken(tarjetaDTO.getToken());
+        if(tarjeta == null)
+            return new ResponseEntity<String>("Error, la tarjeta no existe en la DB", HttpStatus.NOT_FOUND);
         LocalDate today = LocalDate.now();
         String [] expira = tarjeta.getExpira().split("/");
         if((today.getMonthValue() > Integer.valueOf(expira[0]) && today.getYear() >= Integer.valueOf(expira[1])))
             return new ResponseEntity<>("Tarjeta expirada",HttpStatus.FORBIDDEN);
 
-        Random r = new Random();
-        if((r.nextInt((10 - 1) + 1) + 1) == 5 || (r.nextInt((10 - 1) + 1) + 1) == 6) //20% chances de saldo insuficiente
-            return new ResponseEntity<>("Saldo insuficiente",HttpStatus.FORBIDDEN);
-        return new ResponseEntity<>("Operacion realizada con exito",HttpStatus.CREATED);
+        return new ResponseEntity<>("Verificacion Tarjeta realizada con exito",HttpStatus.CREATED);
+    }
+    public ResponseEntity<String> verificarMonto(TarjetaDTO tarjetaDTO){
+        Tarjeta tarjeta = findByToken(tarjetaDTO.getToken());
+        if(tarjeta == null)
+            return new ResponseEntity<String>("Error, la tarjeta no existe en la DB", HttpStatus.NOT_FOUND);
+        if(tarjeta.getLimite() < Integer.valueOf(tarjetaDTO.getMonto()))
+            return new ResponseEntity<>("La compra excede el limite de la tarjeta",HttpStatus.FORBIDDEN);
+
+        return new ResponseEntity<>("Verificacion Monto realizada con exito",HttpStatus.CREATED);
     }
 
     public Tarjeta actualizar(TarjetaAddDTO tarjetaAddDTO,long tarjetaId){

@@ -33,4 +33,37 @@ public class Tarjeta implements Serializable {
 	@Column(name = "expira")
 	@NotNull
 	private String expira;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public int getLimite() {
+		return limite;
+	}
+
+	public void setLimite(int limite) {
+		this.limite = limite;
+	}
+
+	public String getExpira() {
+		return expira;
+	}
+
+	public void setExpira(String expira) {
+		this.expira = expira;
+	}
+	
 }
