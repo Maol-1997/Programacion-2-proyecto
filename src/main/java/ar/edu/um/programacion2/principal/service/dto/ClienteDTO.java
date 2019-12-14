@@ -7,17 +7,28 @@ public class ClienteDTO {
     private Long id;
     private String nombre;
     private String apellido;
+    private Boolean activo;
     private User user;
 
     public ClienteDTO(){}
 
-    public ClienteDTO(String nombre, String apellido, Long id, User user){
+    public ClienteDTO(String nombre, String apellido, Long id, Boolean activo, User user){
         this.setNombre(nombre);
         this.setApellido(apellido);
         this.setId(id);
         this.setUser(user);
+        this.setActivo(activo);
     }
-    public Long getId() {
+    
+    public Boolean getActivo() {
+		return activo;
+	}
+
+	public void setActivo(Boolean activo) {
+		this.activo = activo;
+	}
+
+	public Long getId() {
         return id;
     }
 

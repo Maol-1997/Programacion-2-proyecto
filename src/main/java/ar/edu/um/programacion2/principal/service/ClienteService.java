@@ -1,6 +1,7 @@
 package ar.edu.um.programacion2.principal.service;
 
 import ar.edu.um.programacion2.principal.domain.Cliente;
+import ar.edu.um.programacion2.principal.domain.Tarjeta;
 import ar.edu.um.programacion2.principal.repository.ClienteRepository;
 import ar.edu.um.programacion2.principal.repository.UserRepository;
 import ar.edu.um.programacion2.principal.security.AuthoritiesConstants;
@@ -48,9 +49,11 @@ public class ClienteService {
 		cliente.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get());
 		cliente.setNombre(clienteDTO.getNombre());
 		cliente.setApellido(clienteDTO.getApellido());
+		cliente.setActivo(true);
 		Cliente result = clienteRepository.save(cliente);
 		clienteDTO.setId(result.getId());
 		clienteDTO.setUser(result.getUser());
+		clienteDTO.setActivo(result.getActivo());
 		return ResponseEntity
 				.created(new URI("/api/clientes/" + result.getId())).headers(HeaderUtil
 						.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -71,6 +74,7 @@ public class ClienteService {
 		cliente.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get());
 		cliente.setApellido(clienteDTO.getApellido());
 		cliente.setNombre(clienteDTO.getNombre());
+		cliente.setActivo(clienteDTO.getActivo());
 		Cliente result = clienteRepository.save(cliente);
 		return ResponseEntity.ok().headers(
 				HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -98,6 +102,7 @@ public class ClienteService {
 			a.setId(cliente.getId());
 			a.setApellido(cliente.getApellido());
 			a.setNombre(cliente.getNombre());
+			a.setActivo(cliente.getActivo());
 			clienteDTOnoUsers.add(a);
 		});
 		Page<ClienteDTOnoUser> page1 = new PageImpl<>(clienteDTOnoUsers);
@@ -105,4 +110,23 @@ public class ClienteService {
 				.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page1);
 		return ResponseEntity.ok().headers(headers).body(page1.getContent());
 	}
+	
+	public ResponseEntity<Void> deleteCliente(Long id) {
+		if (clienteRepository.findById(id).get().getUser().getId() != userRepository
+				.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
+			throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
+		Optional<Cliente> found = clienteRepository.findById(id);
+		if (found.isPresent()) {
+			Cliente cliente = found.get();
+			cliente.setActivo(false);
+			Cliente result = clienteRepository.save(cliente);
+			return ResponseEntity.noContent()
+					.headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
+					.build();
+
+		} else {
+			throw new BadRequestAlertException("id no encontrada", "tarjeta", "bad id");
+		}
+	}
+	
 }

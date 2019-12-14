@@ -29,6 +29,9 @@ public class Cliente implements Serializable {
     @Column(name = "apellido")
     private String apellido;
 
+    @Column(name = "activo")
+    private Boolean activo;
+
     @OneToMany(mappedBy = "cliente")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Tarjeta> tarjetas = new HashSet<>();
@@ -38,11 +41,20 @@ public class Cliente implements Serializable {
     private User user;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public Boolean getActivo() {
+		return activo;
+	}
+
+	public void setActivo(Boolean activo) {
+		this.activo = activo;
+	}
+
+	public void setId(Long id) {
         this.id = id;
     }
 
