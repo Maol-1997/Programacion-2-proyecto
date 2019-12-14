@@ -100,8 +100,9 @@ public class CompraService {
 		} else {
 			compra.setValido(true);
 			Compra result = compraRepository.save(compra);
-			LogDTO logDTO = new LogDTO("Verificar Tarjeta", verificacionTarjeta.getEntity().toString(), "OK",
-					result.getId());
+			LogDTO logDTO = new LogDTO("Verificar tarjeta", EntityUtils.toString(verificacionMonto.getEntity(), "UTF" +
+                "-8"),
+                "OK", result.getId());
 			HttpResponse responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
 			logDTO = new LogDTO("Verificar Monto", verificacionMonto.getEntity().toString(), "OK", result.getId());
 			responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
