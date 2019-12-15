@@ -95,7 +95,7 @@ public class TarjetaResource {
 	 * @param pageable the pagination information.
 	 * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list
 	 *         of tarjetas in body.
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@GetMapping("/tarjeta")
 	public ResponseEntity<List<Tarjeta>> getAllTarjetas() throws IOException {
@@ -109,7 +109,7 @@ public class TarjetaResource {
 	 * @param id the id of the tarjeta to retrieve.
 	 * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body
 	 *         the tarjeta, or with status {@code 404 (Not Found)}.
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@GetMapping("/tarjeta/{id}")
 	public ResponseEntity<Tarjeta> getTarjeta(@PathVariable Long id) throws IOException {
@@ -128,7 +128,7 @@ public class TarjetaResource {
 	 *
 	 * @param id the id of the tarjeta to delete.
 	 * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	@DeleteMapping("/tarjeta/{id}")
 	public ResponseEntity<Object> deleteTarjeta(@PathVariable Long id) throws IOException {

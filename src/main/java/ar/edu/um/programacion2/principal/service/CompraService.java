@@ -85,7 +85,7 @@ public class CompraService {
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Accept", "*/*");
 			return ResponseEntity.ok().headers(headers).body(result);
-		} 
+		}
 		else if ((verificacionMonto = PostUtil.sendPost(tarjetaDTO.toString(),
 				"http://127.0.0.1:8081/api/tarjeta/comprar")).getStatusLine().getStatusCode() != 201 && compraDTO.getPrecio() >= 5000) {
 			compra.setValido(false);
@@ -98,15 +98,18 @@ public class CompraService {
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Accept", "*/*");
 			return ResponseEntity.ok().headers(headers).body(result);
-		} 
+		}
 		else {
 			compra.setValido(true);
 			Compra result = compraRepository.save(compra);
-			LogDTO logDTO = new LogDTO("Verificar tarjeta", EntityUtils.toString(verificacionMonto.getEntity(), "UTF" +
+            LogDTO logDTO = new LogDTO("Verificar Tarjeta", EntityUtils.toString(verificacionTarjeta.getEntity(),
+                "UTF" +
+                    "-8"),
+                "OK", result.getId());
+            HttpResponse responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
+            logDTO = new LogDTO("Verificar Monto", EntityUtils.toString(verificacionMonto.getEntity(), "UTF" +
                 "-8"),
                 "OK", result.getId());
-			HttpResponse responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
-			logDTO = new LogDTO("Verificar Monto", verificacionMonto.getEntity().toString(), "OK", result.getId());
 			responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
 			logDTO = new LogDTO("Confirmacion Venta", "La venta se realizo con exito", "OK", result.getId());
 			responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
