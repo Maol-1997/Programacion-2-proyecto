@@ -53,8 +53,8 @@ public class TarjetaController {
 		return new ResponseEntity<Void>(service.delete(tarjetaId), HttpStatus.NO_CONTENT);
 	}
 
-	@PutMapping("{tarjetaId}")
-	public ResponseEntity<Tarjeta> update(@RequestBody TarjetaAddDTO tarjetaAddDTO, @PathVariable Long tarjetaId) {
-		return new ResponseEntity<Tarjeta>(service.actualizar(tarjetaAddDTO, tarjetaId), HttpStatus.OK);
+	@PutMapping("/{tarjetaId}")
+	public ResponseEntity<String> update(@RequestBody TarjetaAddDTO tarjetaAddDTO, @PathVariable Long tarjetaId) {
+		return new ResponseEntity<String>(service.actualizar(tarjetaAddDTO, tarjetaId).getToken(), HttpStatus.OK);
 	}
 }
