@@ -111,6 +111,14 @@ public class ClienteService {
 		return ResponseEntity.ok().headers(headers).body(page1.getContent());
 	}
 	
+	public ResponseEntity<Cliente> getClienteByName(String nombre, String apellido) {
+		if (clienteRepository.findByNyA(nombre,apellido).get().getUser().getId() != userRepository
+				.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
+			throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
+		Optional<Cliente> cliente = clienteRepository.findByNyA(nombre,apellido);
+		return ResponseUtil.wrapOrNotFound(cliente);
+	}
+	
 	public ResponseEntity<Void> deleteCliente(Long id) {
 		if (clienteRepository.findById(id).get().getUser().getId() != userRepository
 				.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad

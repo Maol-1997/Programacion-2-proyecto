@@ -17,9 +17,10 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
     @Query("select cliente from Cliente cliente where cliente.user.login = ?#{principal.username}")
     List<Cliente> findByUserIsCurrentUser();
-    
-    @Query("select cliente from Cliente cliente where cliente.user.login = ?1")
-    void delete(Long id);
 
+    
+    @Query("select cliente from Cliente cliente where cliente.nombre = ?1 AND cliente.apellido = ?2")
+    Optional<Cliente> findByNyA(String nombre, String apellido);
+    
 
 }

@@ -45,15 +45,15 @@ public class TarjetaService {
 	}
 
 	public ResponseEntity<Tarjeta> añadirTarjeta(TarjetaAddDTO tarjetaAddDTO) throws IOException, URISyntaxException {
-		 if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
-		if (clienteRepository.findById(tarjetaAddDTO.getCliente_id()).get().getUser().getId() != userRepository
-				.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
-			throw new BadRequestAlertException("No te pertenece ese cliente", "tarjeta", "prohibido");
-		if (tarjetaAddDTO.getNombre() == null || tarjetaAddDTO.getApellido() == null
-				|| tarjetaAddDTO.getVencimiento() == null || tarjetaAddDTO.getNumero() == null
-				|| tarjetaAddDTO.getSeguridad() == null || tarjetaAddDTO.getCliente_id() == null)
-			throw new BadRequestAlertException("faltan parametros", "tarjeta", "missing parameters");
-		 }
+		if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+			if (clienteRepository.findById(tarjetaAddDTO.getCliente_id()).get().getUser().getId() != userRepository
+					.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
+				throw new BadRequestAlertException("No te pertenece ese cliente", "tarjeta", "prohibido");
+			if (tarjetaAddDTO.getNombre() == null || tarjetaAddDTO.getApellido() == null
+					|| tarjetaAddDTO.getVencimiento() == null || tarjetaAddDTO.getNumero() == null
+					|| tarjetaAddDTO.getSeguridad() == null || tarjetaAddDTO.getCliente_id() == null)
+				throw new BadRequestAlertException("faltan parametros", "tarjeta", "missing parameters");
+		}
 		System.out.println("Llego");
 
 		String ult4 = String.valueOf(tarjetaAddDTO.getNumero())
@@ -76,22 +76,21 @@ public class TarjetaService {
 	}
 
 	public ResponseEntity<Tarjeta> editTarjeta(TarjetaAddDTO tarjetaAddDTO) throws IOException {
-
-		 if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
-		if (clienteRepository.findById(tarjetaAddDTO.getCliente_id()).get().getUser().getId() != userRepository
-				.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
-			throw new BadRequestAlertException("No te pertenece ese cliente", "tarjeta", "prohibido");
-		if (tarjetaRepository.findById(tarjetaAddDTO.getId()).get().getCliente().getUser().getId() != userRepository
-				.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
-			throw new BadRequestAlertException("No te pertenece esta tarjeta", "tarjeta", "prohibido");
-		if (tarjetaAddDTO.getNombre() == null || tarjetaAddDTO.getApellido() == null
-				|| tarjetaAddDTO.getVencimiento() == null || tarjetaAddDTO.getNumero() == null
-				|| tarjetaAddDTO.getSeguridad() == null || tarjetaAddDTO.getCliente_id() == null)
-			throw new BadRequestAlertException("faltan parametros", "tarjeta", "missing parameters");
-		if (tarjetaAddDTO.getId() == null) {
-			throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+		if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+			if (clienteRepository.findById(tarjetaAddDTO.getCliente_id()).get().getUser().getId() != userRepository
+					.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
+				throw new BadRequestAlertException("No te pertenece ese cliente", "tarjeta", "prohibido");
+			if (tarjetaRepository.findById(tarjetaAddDTO.getId()).get().getCliente().getUser().getId() != userRepository
+					.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
+				throw new BadRequestAlertException("No te pertenece esta tarjeta", "tarjeta", "prohibido");
+			if (tarjetaAddDTO.getNombre() == null || tarjetaAddDTO.getApellido() == null
+					|| tarjetaAddDTO.getVencimiento() == null || tarjetaAddDTO.getNumero() == null
+					|| tarjetaAddDTO.getSeguridad() == null || tarjetaAddDTO.getCliente_id() == null)
+				throw new BadRequestAlertException("faltan parametros", "tarjeta", "missing parameters");
+			if (tarjetaAddDTO.getId() == null) {
+				throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+			}
 		}
-		 }
 
 		String ult4 = String.valueOf(tarjetaAddDTO.getNumero())
 				.substring(String.valueOf(tarjetaAddDTO.getNumero()).length() - 4);
@@ -113,20 +112,20 @@ public class TarjetaService {
 	}
 
 	public ResponseEntity<Tarjeta> findTarjeta(Long id) throws IOException {
-		 if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
-		if (tarjetaRepository.findById(id).get().getCliente().getUser().getId() != userRepository
-				.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
-			throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
+		if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
+			if (tarjetaRepository.findById(id).get().getCliente().getUser().getId() != userRepository
+					.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
+				throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
 
 		Optional<Tarjeta> result = tarjetaRepository.findById(id);
 		return ResponseUtil.wrapOrNotFound(result);
 	}
 
 	public ResponseEntity<Map<String, Long>> findTarjetaByToken(String token) throws IOException {
-		 if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
-		if (tarjetaRepository.findByTokenOpt(token).get().getCliente().getUser().getId() != userRepository
-				.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
-			throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
+		if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
+			if (tarjetaRepository.findByTokenOpt(token).get().getCliente().getUser().getId() != userRepository
+					.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
+				throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
 
 		Optional<Tarjeta> result = tarjetaRepository.findByTokenOpt(token);
 		System.out.println(result);
@@ -152,10 +151,10 @@ public class TarjetaService {
 	}
 
 	public ResponseEntity<Object> deleteById(Long id) throws IOException {
-		 if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
-		if (tarjetaRepository.findById(id).get().getCliente().getUser().getId() != userRepository
-				.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
-			throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
+		if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
+			if (tarjetaRepository.findById(id).get().getCliente().getUser().getId() != userRepository
+					.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
+				throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
 		Optional<Tarjeta> found = tarjetaRepository.findById(id);
 		if (found.isPresent()) {
 			Tarjeta tarjeta = found.get();

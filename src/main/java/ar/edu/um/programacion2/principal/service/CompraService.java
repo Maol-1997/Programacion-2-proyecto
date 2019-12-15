@@ -85,8 +85,9 @@ public class CompraService {
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Accept", "*/*");
 			return ResponseEntity.ok().headers(headers).body(result);
-		} else if ((verificacionMonto = PostUtil.sendPost(tarjetaDTO.toString(),
-				"http://127.0.0.1:8081/api/tarjeta/comprar")).getStatusLine().getStatusCode() != 201) {
+		} 
+		else if ((verificacionMonto = PostUtil.sendPost(tarjetaDTO.toString(),
+				"http://127.0.0.1:8081/api/tarjeta/comprar")).getStatusLine().getStatusCode() != 201 && compraDTO.getPrecio() >= 5000) {
 			compra.setValido(false);
 			Compra result = compraRepository.save(compra);
 			LogDTO logDTO = new LogDTO("Verificar Monto", EntityUtils.toString(verificacionMonto.getEntity(), "UTF-8"),
@@ -97,7 +98,8 @@ public class CompraService {
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Accept", "*/*");
 			return ResponseEntity.ok().headers(headers).body(result);
-		} else {
+		} 
+		else {
 			compra.setValido(true);
 			Compra result = compraRepository.save(compra);
 			LogDTO logDTO = new LogDTO("Verificar tarjeta", EntityUtils.toString(verificacionMonto.getEntity(), "UTF" +
