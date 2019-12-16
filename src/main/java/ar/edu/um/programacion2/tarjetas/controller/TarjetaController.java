@@ -3,6 +3,7 @@
  */
  package ar.edu.um.programacion2.tarjetas.controller;
 
+import ar.edu.um.programacion2.tarjetas.model.DTO.MensajeDTO;
 import ar.edu.um.programacion2.tarjetas.model.Tarjeta;
 import ar.edu.um.programacion2.tarjetas.model.DTO.TarjetaAddDTO;
 import ar.edu.um.programacion2.tarjetas.model.DTO.TarjetaDTO;
@@ -35,16 +36,17 @@ public class TarjetaController {
 		return new ResponseEntity<String>(service.crear(tarjetaAddDTO),HttpStatus.OK);
 	}
 
-	@PostMapping("/comprar")
+/*	@PostMapping("/comprar")
 	public ResponseEntity<String> comprar(@RequestBody TarjetaDTO tarjetaDTO) {
 		return service.comprar(tarjetaDTO);
-	}
+	}*/
+
 	@PostMapping("/tarjeta")
-	public ResponseEntity<String> verificarTarjeta(@RequestBody TarjetaDTO tarjetaDTO) {
+	public ResponseEntity<MensajeDTO> verificarTarjeta(@RequestBody TarjetaDTO tarjetaDTO) {
 		return service.verificarTarjeta(tarjetaDTO);
 	}
 	@PostMapping("/monto")
-	public ResponseEntity<String> verificarMonto(@RequestBody TarjetaDTO tarjetaDTO) {
+	public ResponseEntity<MensajeDTO> verificarMonto(@RequestBody TarjetaDTO tarjetaDTO) {
 		return service.verificarMonto(tarjetaDTO);
 	}
 

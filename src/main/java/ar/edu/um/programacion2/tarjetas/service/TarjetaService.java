@@ -5,6 +5,7 @@ package ar.edu.um.programacion2.tarjetas.service;
 
 import ar.edu.um.programacion2.tarjetas.Repository.ITarjetaRepository;
 import ar.edu.um.programacion2.tarjetas.exceptions.TarjetaNotFoundException;
+import ar.edu.um.programacion2.tarjetas.model.DTO.MensajeDTO;
 import ar.edu.um.programacion2.tarjetas.model.Tarjeta;
 import ar.edu.um.programacion2.tarjetas.model.DTO.TarjetaAddDTO;
 import ar.edu.um.programacion2.tarjetas.model.DTO.TarjetaDTO;
@@ -48,7 +49,7 @@ public class TarjetaService {
         return token;
     }
 
-    public ResponseEntity<String> comprar(TarjetaDTO tarjetaDTO){
+    /*public ResponseEntity<String> comprar(TarjetaDTO tarjetaDTO){
         Tarjeta tarjeta = findByToken(tarjetaDTO.getToken());
         if(tarjeta == null)
             return new ResponseEntity<String>("Error, la tarjeta no existe en la DB", HttpStatus.NOT_FOUND);
@@ -56,26 +57,27 @@ public class TarjetaService {
         if((r.nextInt((10 - 1) + 1) + 1) == 5 || (r.nextInt((10 - 1) + 1) + 1) == 6) //20% chances de saldo insuficiente
             return new ResponseEntity<>("Saldo insuficiente",HttpStatus.FORBIDDEN);
         return new ResponseEntity<>("Operacion realizada con exito",HttpStatus.CREATED);
-    }
-    public ResponseEntity<String> verificarTarjeta(TarjetaDTO tarjetaDTO){
+    }*/
+
+    public ResponseEntity<MensajeDTO> verificarTarjeta(TarjetaDTO tarjetaDTO){
         Tarjeta tarjeta = findByToken(tarjetaDTO.getToken());
         if(tarjeta == null)
-            return new ResponseEntity<String>("Error, la tarjeta no existe en la DB", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<MensajeDTO>(new MensajeDTO(20,"Error, la tarjeta no existe en la DB"),
+                    HttpStatus.NOT_FOUND);
         LocalDate today = LocalDate.now();
         String [] expira = tarjeta.getExpira().split("/");
         if((today.getMonthValue() > Integer.valueOf(expira[0]) && today.getYear() >= Integer.valueOf(expira[1])))
-            return new ResponseEntity<>("Tarjeta expirada",HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new MensajeDTO(21,"Tarjeta expirada"),HttpStatus.FORBIDDEN);
 
-        return new ResponseEntity<>("Verificacion Tarjeta realizada con exito",HttpStatus.CREATED);
+        return new ResponseEntity<>(new MensajeDTO(2,"Verificacion Tarjeta realizada con exito"),HttpStatus.CREATED);
     }
-    public ResponseEntity<String> verificarMonto(TarjetaDTO tarjetaDTO){
+    public ResponseEntity<MensajeDTO> verificarMonto(TarjetaDTO tarjetaDTO){
         Tarjeta tarjeta = findByToken(tarjetaDTO.getToken());
-        if(tarjeta == null)
-            return new ResponseEntity<String>("Error, la tarjeta no existe en la DB", HttpStatus.NOT_FOUND);
         if(tarjeta.getLimite() < Integer.valueOf(tarjetaDTO.getMonto()))
-            return new ResponseEntity<>("La compra excede el limite de la tarjeta",HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(new MensajeDTO(30,"La compra excede el limite de la tarjeta"),
+                    HttpStatus.FORBIDDEN);
 
-        return new ResponseEntity<>("Verificacion Monto realizada con exito",HttpStatus.CREATED);
+        return new ResponseEntity<>(new MensajeDTO(1,"Verificacion Monto realizada con exito"),HttpStatus.CREATED);
     }
 
     public Tarjeta actualizar(TarjetaAddDTO tarjetaAddDTO,long tarjetaId){
