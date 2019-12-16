@@ -1,6 +1,8 @@
 package ar.edu.um.programacion2.principal.web.rest;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +26,8 @@ public class LogResource {
 
         this.logService = logService;
     }
-	@GetMapping("/cliente")
-    public ResponseEntity<List<LogDTO>> obtainLog() {
+	@GetMapping("/log")
+    public ResponseEntity<List<LogDTO>> obtainLog() throws IOException {
     	return logService.getAllLogs();
     }
 }

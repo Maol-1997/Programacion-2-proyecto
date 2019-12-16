@@ -70,7 +70,7 @@ public class ClienteResource {
     public ResponseEntity<List<ClienteDTOnoUser>> obtallClientes(Pageable pageable) {
     	return clienteService.getAllClientes();
     }
-    @GetMapping("/cliente")
+    @GetMapping("/cliente/name")
     public ResponseEntity<Cliente> searchByNames(@RequestParam String nombre, @RequestParam String apellido) {
         return clienteService.getClienteByName(nombre, apellido);
     }

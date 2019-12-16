@@ -21,8 +21,29 @@ public class PostUtil {
     private static String jwt_log = ""; //JWT TOKEN LOGS
     private static String jwt_tarjeta = ""; //JWT TOKEN TARJETAS
     private static final CloseableHttpClient httpClient = HttpClients.createDefault();
+    
 
-    public static HttpResponse sendGet(String payload, String url) throws IOException {
+    public static String getJwt_log() {
+		return jwt_log;
+	}
+
+
+	public static void setJwt_log(String jwt_log) {
+		PostUtil.jwt_log = jwt_log;
+	}
+
+
+	public static String getJwt_tarjeta() {
+		return jwt_tarjeta;
+	}
+
+
+	public static void setJwt_tarjeta(String jwt_tarjeta) {
+		PostUtil.jwt_tarjeta = jwt_tarjeta;
+	}
+
+
+	public static HttpResponse sendGet(String url) throws IOException {
         boolean flag;
         boolean port;
         CloseableHttpResponse response;
