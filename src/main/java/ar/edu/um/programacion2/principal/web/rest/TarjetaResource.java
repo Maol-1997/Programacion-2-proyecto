@@ -82,11 +82,11 @@ public class TarjetaResource {
 	 * @throws URISyntaxException if the Location URI syntax is incorrect.
 	 * @throws IOException
 	 */
-	@PutMapping("/tarjeta")
-	public ResponseEntity<Tarjeta> updateTarjeta(@Valid @RequestBody TarjetaAddDTO tarjeta)
+	@PutMapping("/tarjeta/{id}")
+	public ResponseEntity<Object> updateTarjeta(@PathVariable Long id)
 			throws URISyntaxException, IOException {
-		log.debug("REST request to update Tarjeta : {}", tarjeta);
-		return tarjetaService.editTarjeta(tarjeta);
+		log.debug("REST request to update Tarjeta : {}", id);
+		return tarjetaService.editTarjeta(id);
 	}
 
 	/**

@@ -10,6 +10,7 @@ public class TarjetaAddDTO {
     private String vencimiento;
     private Long cliente_id;
     private Boolean alta;
+    private String token;
 
     public TarjetaAddDTO(){}
 
@@ -26,6 +27,20 @@ public class TarjetaAddDTO {
 		this.vencimiento = vencimiento;
 		this.cliente_id = cliente_id;
 		this.alta = alta;
+	}
+	public TarjetaAddDTO(Long id, String nombre, String apellido, Integer seguridad, Long numero, Integer limite,
+			String vencimiento, Long cliente_id, Boolean alta, String token) {
+		super();
+		this.id = id;
+		this.nombre = nombre;
+		this.apellido = apellido;
+		this.seguridad = seguridad;
+		this.numero = numero;
+		this.limite = limite;
+		this.vencimiento = vencimiento;
+		this.cliente_id = cliente_id;
+		this.alta = alta;
+		this.token = token;
 	}
 	public TarjetaAddDTO(String nombre, String apellido, Integer seguridad, Long numero, Integer limite,
 			String vencimiento, Long cliente_id, Boolean alta) {
@@ -60,7 +75,18 @@ public class TarjetaAddDTO {
         this.vencimiento = vencimiento;
         this.cliente_id = cliente_id;
     }
-    public Boolean getAlta() {
+    
+    public String getToken() {
+		return token;
+	}
+
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+
+	public Boolean getAlta() {
 		return alta;
 	}
 
