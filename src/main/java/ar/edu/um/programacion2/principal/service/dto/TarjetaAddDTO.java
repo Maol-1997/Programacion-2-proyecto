@@ -9,10 +9,38 @@ public class TarjetaAddDTO {
     private Integer limite;
     private String vencimiento;
     private Long cliente_id;
+    private Boolean alta;
 
     public TarjetaAddDTO(){}
 
-    public TarjetaAddDTO(String nombre, String apellido, Integer seguridad, Long numero, Integer limite, String vencimiento, Long cliente_id) {
+
+	public TarjetaAddDTO(Long id, String nombre, String apellido, Integer seguridad, Long numero, Integer limite,
+			String vencimiento, Long cliente_id, Boolean alta) {
+		super();
+		this.id = id;
+		this.nombre = nombre;
+		this.apellido = apellido;
+		this.seguridad = seguridad;
+		this.numero = numero;
+		this.limite = limite;
+		this.vencimiento = vencimiento;
+		this.cliente_id = cliente_id;
+		this.alta = alta;
+	}
+	public TarjetaAddDTO(String nombre, String apellido, Integer seguridad, Long numero, Integer limite,
+			String vencimiento, Long cliente_id, Boolean alta) {
+		this.nombre = nombre;
+		this.apellido = apellido;
+		this.seguridad = seguridad;
+		this.numero = numero;
+		this.limite = limite;
+		this.vencimiento = vencimiento;
+		this.cliente_id = cliente_id;
+		this.alta = alta;
+	}
+
+
+	public TarjetaAddDTO(String nombre, String apellido, Integer seguridad, Long numero, Integer limite, String vencimiento, Long cliente_id) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.seguridad = seguridad;
@@ -20,6 +48,7 @@ public class TarjetaAddDTO {
         this.limite = limite;
         this.vencimiento = vencimiento;
         this.cliente_id = cliente_id;
+        
     }
     public TarjetaAddDTO(Long id,String nombre, String apellido, Integer seguridad, Long numero, Integer limite, String vencimiento, Long cliente_id) {
         this.id = id;
@@ -31,6 +60,14 @@ public class TarjetaAddDTO {
         this.vencimiento = vencimiento;
         this.cliente_id = cliente_id;
     }
+    public Boolean getAlta() {
+		return alta;
+	}
+
+	public void setAlta(Boolean alta) {
+		this.alta = alta;
+	}
+
     
     public Long getId() {
 		return id;
