@@ -4,24 +4,20 @@ import lombok.Data;
 
 @Data
 public class TarjetaAddDTO {
-    String nombre;
-    String apellido;
+
     int seguridad;
     long numero;
     int limite;
     String vencimiento;
     int cliente_id;
-	public String getNombre() {
-		return nombre;
+    Boolean alta;
+
+
+	public Boolean getAlta() {
+		return alta;
 	}
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-	public String getApellido() {
-		return apellido;
-	}
-	public void setApellido(String apellido) {
-		this.apellido = apellido;
+	public void setAlta(Boolean alta) {
+		this.alta = alta;
 	}
 	public int getSeguridad() {
 		return seguridad;

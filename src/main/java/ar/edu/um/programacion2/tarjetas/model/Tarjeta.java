@@ -26,6 +26,10 @@ public class Tarjeta implements Serializable {
 	@NotNull
 	private String token;
 
+    @NotNull
+    @Column(name = "alta")
+    private Boolean alta;
+    
 	@Column(name = "limite")
 	@NotNull
 	private int limite;
@@ -65,5 +69,14 @@ public class Tarjeta implements Serializable {
 	public void setExpira(String expira) {
 		this.expira = expira;
 	}
+
+	public Boolean getAlta() {
+		return alta;
+	}
+
+	public void setAlta(Boolean alta) {
+		this.alta = alta;
+	}
+	
 	
 }

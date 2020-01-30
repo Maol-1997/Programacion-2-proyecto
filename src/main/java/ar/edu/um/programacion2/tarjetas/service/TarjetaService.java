@@ -44,6 +44,8 @@ public class TarjetaService {
         Tarjeta tarjeta = new Tarjeta();
         tarjeta.setLimite(tarjetaAddDTO.getLimite());
         tarjeta.setToken(token);
+        System.out.println(tarjetaAddDTO.getAlta());
+        tarjeta.setAlta(tarjetaAddDTO.getAlta());
         tarjeta.setExpira(tarjetaAddDTO.getVencimiento());
         add(tarjeta);
         return token;
@@ -67,17 +69,17 @@ public class TarjetaService {
         LocalDate today = LocalDate.now();
         String [] expira = tarjeta.getExpira().split("/");
         if((today.getMonthValue() > Integer.valueOf(expira[0]) && today.getYear() >= Integer.valueOf(expira[1])))
-            return new ResponseEntity<>(new MensajeDTO(21,"Tarjeta expirada"),HttpStatus.FORBIDDEN);
+            return new ResponseEntity<MensajeDTO>(new MensajeDTO(21,"Tarjeta expirada"),HttpStatus.FORBIDDEN);
 
-        return new ResponseEntity<>(new MensajeDTO(2,"Verificacion Tarjeta realizada con exito"),HttpStatus.CREATED);
+        return new ResponseEntity<MensajeDTO>(new MensajeDTO(2,"Verificacion Tarjeta realizada con exito"),HttpStatus.CREATED);
     }
     public ResponseEntity<MensajeDTO> verificarMonto(TarjetaDTO tarjetaDTO){
         Tarjeta tarjeta = findByToken(tarjetaDTO.getToken());
         if(tarjeta.getLimite() < Integer.valueOf(tarjetaDTO.getMonto()))
-            return new ResponseEntity<>(new MensajeDTO(30,"La compra excede el limite de la tarjeta"),
+            return new ResponseEntity<MensajeDTO>(new MensajeDTO(30,"La compra excede el limite de la tarjeta"),
                     HttpStatus.FORBIDDEN);
 
-        return new ResponseEntity<>(new MensajeDTO(1,"Verificacion Monto realizada con exito"),HttpStatus.CREATED);
+        return new ResponseEntity<MensajeDTO>(new MensajeDTO(1,"Verificacion Monto realizada con exito"),HttpStatus.CREATED);
     }
 
     public Tarjeta actualizar(TarjetaAddDTO tarjetaAddDTO,long tarjetaId){
