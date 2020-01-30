@@ -18,11 +18,13 @@ Crear cliente:
     }
 
 Crear tarjeta
+  Ya no necesita
+    "nombre": "roberto",
+    "apellido": "Perez",
 
     http://127.0.0.1:8080/api/tarjeta POST
     {
-    "nombre": "roberto",
-    "apellido": "Perez",
+    
     "vencimiento": "11/2019",
     "numero": 1234567891234567,
     "limite": 5000,
