@@ -15,6 +15,16 @@ public class TarjetaAddDTO {
     public TarjetaAddDTO(){}
 
 
+	public TarjetaAddDTO(Long id, Integer seguridad, Long numero, Integer limite, String vencimiento, Long cliente_id, Boolean alta) {
+		super();
+		this.id = id;
+		this.seguridad = seguridad;
+		this.numero = numero;
+		this.limite = limite;
+		this.vencimiento = vencimiento;
+		this.cliente_id = cliente_id;
+		this.alta = alta;
+	}	
 	public TarjetaAddDTO(Long id, String nombre, String apellido, Integer seguridad, Long numero, Integer limite,
 			String vencimiento, Long cliente_id, Boolean alta) {
 		super();

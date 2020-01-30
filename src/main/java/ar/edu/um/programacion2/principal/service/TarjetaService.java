@@ -8,9 +8,9 @@ import ar.edu.um.programacion2.principal.repository.UserRepository;
 import ar.edu.um.programacion2.principal.security.AuthoritiesConstants;
 import ar.edu.um.programacion2.principal.security.SecurityUtils;
 import ar.edu.um.programacion2.principal.service.dto.TarjetaAddDTO;
+import ar.edu.um.programacion2.principal.service.util.CreditCardType.CardType;
 import ar.edu.um.programacion2.principal.service.util.PostUtil;
 import ar.edu.um.programacion2.principal.web.rest.errors.BadRequestAlertException;
-import ch.qos.logback.core.status.Status;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.apache.http.HttpResponse;
@@ -48,7 +48,7 @@ public class TarjetaService {
 	}
 
 	public ResponseEntity<Tarjeta> añadirTarjeta(TarjetaAddDTO tarjetaAddDTO) throws IOException, URISyntaxException {
-		
+
 		Optional<Cliente> cliente = clienteRepository.findById(tarjetaAddDTO.getCliente_id());
 		if (cliente.isEmpty()) {
 			throw new BadRequestAlertException("No existe este cliente", "cliente", "prohibido");
@@ -58,10 +58,13 @@ public class TarjetaService {
 					.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
 				throw new BadRequestAlertException("No te pertenece ese cliente", "tarjeta", "prohibido");
 		}
-		if (//arjetaAddDTO.getNombre() == null || tarjetaAddDTO.getApellido() == null|| 
-				tarjetaAddDTO.getVencimiento() == null || tarjetaAddDTO.getNumero() == null
+		if (
+		tarjetaAddDTO.getVencimiento() == null || tarjetaAddDTO.getNumero() == null
 				|| tarjetaAddDTO.getSeguridad() == null || tarjetaAddDTO.getCliente_id() == null)
 			throw new BadRequestAlertException("faltan parametros", "tarjeta", "missing parameters");
+
+		
+		CardType type = CardType.detect(Long.toString(tarjetaAddDTO.getNumero())); 
 
 		String ult4 = String.valueOf(tarjetaAddDTO.getNumero())
 				.substring(String.valueOf(tarjetaAddDTO.getNumero()).length() - 4);
@@ -69,6 +72,7 @@ public class TarjetaService {
 		HttpResponse response = PostUtil.sendPost(tarjetaAddDTO.toString(), "http://127.0.0.1:8081/api/tarjeta/");
 		String token = EntityUtils.toString(response.getEntity(), "UTF-8");
 		Tarjeta tarjeta = new Tarjeta();
+		tarjeta.setTipo(type);
 		tarjeta.setToken(token);
 		tarjeta.setAlta(tarjetaAddDTO.getAlta());
 		tarjeta.setUltDigitos(Integer.valueOf(ult4));
@@ -81,40 +85,6 @@ public class TarjetaService {
 	}
 
 	public ResponseEntity<Object> editTarjeta(Long id) throws IOException {
-
-//        if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
-//            if (clienteRepository.findById(tarjetaAddDTO.getCliente_id()).get().getUser().getId() != userRepository
-//                .findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
-//                throw new BadRequestAlertException("No te pertenece ese cliente", "tarjeta", "prohibido");
-//            if (tarjetaRepository.findById(tarjetaAddDTO.getId()).get().getCliente().getUser().getId() != userRepository
-//                .findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
-//                throw new BadRequestAlertException("No te pertenece esta tarjeta", "tarjeta", "prohibido");
-//            if (tarjetaAddDTO.getNombre() == null || tarjetaAddDTO.getApellido() == null
-//                || tarjetaAddDTO.getVencimiento() == null || tarjetaAddDTO.getNumero() == null
-//                || tarjetaAddDTO.getSeguridad() == null || tarjetaAddDTO.getCliente_id() == null)
-//                throw new BadRequestAlertException("faltan parametros", "tarjeta", "missing parameters");
-//            if (tarjetaAddDTO.getId() == null) {
-//                throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-//            }
-//        }
-//
-//        String ult4 = String.valueOf(tarjetaAddDTO.getNumero())
-//            .substring(String.valueOf(tarjetaAddDTO.getNumero()).length() - 4);
-//
-//        HttpResponse response = PostUtil.sendPut(tarjetaAddDTO.toString(),
-//            "http://127.0.0.1:8081/api/tarjeta/"+tarjetaAddDTO.getId());
-//        String token = EntityUtils.toString(response.getEntity(), "UTF-8");
-//        System.out.println(token);
-//        Tarjeta tarjeta = new Tarjeta();
-//        tarjeta.setId(tarjetaAddDTO.getId());
-//        tarjeta.setToken(token);
-//        tarjeta.setAlta(tarjetaAddDTO.getAlta());
-//        tarjeta.setUltDigitos(Integer.valueOf(ult4));
-//        tarjeta.setCliente(clienteRepository.findById(tarjetaAddDTO.getCliente_id()).get());
-//        Tarjeta result = tarjetaRepository.save(tarjeta);
-//        return ResponseEntity.ok().headers(
-//            HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, tarjeta.getId().toString()))
-//            .body(result);
 		if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
 			if (tarjetaRepository.findById(id).get().getCliente().getUser().getId() != userRepository
 					.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
@@ -198,4 +168,5 @@ public class TarjetaService {
 
 	}
 
+	
 }

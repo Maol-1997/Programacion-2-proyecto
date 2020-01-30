@@ -1,5 +1,8 @@
 package ar.edu.um.programacion2.principal.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import ar.edu.um.programacion2.principal.service.util.CreditCardType.CardType;
+
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -22,6 +25,9 @@ public class Tarjeta implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
+    @Column(name = "tipo", nullable = false)
+    private CardType tipo;
     @NotNull
     @Column(name = "ult_digitos", nullable = false)
     private Integer ultDigitos;
@@ -111,7 +117,19 @@ public class Tarjeta implements Serializable {
         return id != null && id.equals(((Tarjeta) o).id);
     }
 
-    @Override
+    public CardType getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(CardType tipo) {
+		this.tipo = tipo;
+	}
+
+	public Boolean getAlta() {
+		return alta;
+	}
+
+	@Override
     public int hashCode() {
         return 31;
     }
@@ -120,6 +138,7 @@ public class Tarjeta implements Serializable {
     public String toString() {
         return "Tarjeta{" +
             "id=" + getId() +
+            "tipo=" + getTipo() +
             ", ultDigitos=" + getUltDigitos() +
             ", token='" + getToken() + "'" +
             ", alta='" + isAlta() + "'" +
