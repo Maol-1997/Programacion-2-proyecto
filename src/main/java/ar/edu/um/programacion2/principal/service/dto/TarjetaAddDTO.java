@@ -171,8 +171,7 @@ public class TarjetaAddDTO {
 
     @Override
     public String toString() {
-        return "{\"nombre\": \"" + getNombre() + "\"," +
-            "\"apellido\": \"" + getApellido() + "\"," +
+        return "{\"alta\": \"" + getAlta() + "\"," +
             "\"vencimiento\": \"" + getVencimiento() + "\"," +
             "\"numero\": " + getNumero() + "," +
             "\"seguridad\": " + getSeguridad() + "," +

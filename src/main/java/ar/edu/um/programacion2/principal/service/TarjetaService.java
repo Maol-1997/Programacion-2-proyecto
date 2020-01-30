@@ -68,7 +68,6 @@ public class TarjetaService {
 
 		String ult4 = String.valueOf(tarjetaAddDTO.getNumero())
 				.substring(String.valueOf(tarjetaAddDTO.getNumero()).length() - 4);
-
 		HttpResponse response = PostUtil.sendPost(tarjetaAddDTO.toString(), "http://127.0.0.1:8081/api/tarjeta/");
 		String token = EntityUtils.toString(response.getEntity(), "UTF-8");
 		Tarjeta tarjeta = new Tarjeta();
