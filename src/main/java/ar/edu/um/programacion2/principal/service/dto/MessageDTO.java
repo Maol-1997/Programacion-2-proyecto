@@ -28,6 +28,14 @@ public class MessageDTO {
 		this.mensaje = mensaje;
 	}
     
+    public String toString() {
+        return "{\"codigo\": \"" + this.getCodigo() + "\"," +
+            "\"mensaje\": " + this.getMensaje() + "}";
+    }    
+    public String toStringCode() {
+        return Integer.toString(this.getCodigo());
+        }
+    
 }
 
 

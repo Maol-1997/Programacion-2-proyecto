@@ -15,6 +15,7 @@ import ar.edu.um.programacion2.principal.service.dto.MessageDTO;
 import ar.edu.um.programacion2.principal.service.dto.TarjetaDTO;
 import ar.edu.um.programacion2.principal.service.util.PostUtil;
 import ar.edu.um.programacion2.principal.web.rest.errors.BadRequestAlertException;
+import ar.edu.um.programacion2.principal.web.rest.errors.ForbiddenRequestAlertException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.ribbon.proxy.annotation.Http;
@@ -90,15 +91,13 @@ public class CompraService {
 		if ((verificacionTarjeta = PostUtil.sendPost(tarjetaDTO.toString(),
 				"http://127.0.0.1:8081/api/tarjeta/tarjeta")).getStatusLine().getStatusCode() != 201) {
 			messageTarjeta = objectMapper.readValue(verificacionTarjeta.getEntity().getContent(), MessageDTO.class);
-			// System.out.println(messageTarjeta.getMensaje());
-			// System.out.println(EntityUtils.getContentCharSet(verificacionTarjeta));
 			compra.setValido(false);
 			Compra result = compraRepository.save(compra);
 			LogDTO logDTO = new LogDTO("Verificar Tarjeta", messageTarjeta.getMensaje(), "FALLO", result.getId());
 			HttpResponse responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Accept", "*/*");
-			return ResponseEntity.ok().headers(headers).body(result);
+			throw new ForbiddenRequestAlertException(messageTarjeta.getMensaje(), "tarjeta", messageTarjeta.toStringCode());
 		} else if ((verificacionMonto = PostUtil.sendPost(tarjetaDTO.toString(),
 				"http://127.0.0.1:8081/api/tarjeta/comprar")).getStatusLine().getStatusCode() != 201
 				&& compraDTO.getPrecio() >= 5000) {
@@ -111,7 +110,7 @@ public class CompraService {
 			System.out.println(responseLog);
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Accept", "*/*");
-			return ResponseEntity.ok().headers(headers).body(result);
+			throw new ForbiddenRequestAlertException(messageMonto.getMensaje(), "tarjeta", messageMonto.toStringCode());
 		} else {
 			System.out.println("Entro a compra valida");
 			compra.setValido(true);
