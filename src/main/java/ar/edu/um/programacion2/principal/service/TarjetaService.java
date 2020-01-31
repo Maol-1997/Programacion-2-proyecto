@@ -15,11 +15,18 @@ import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.apache.http.HttpResponse;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.URI;
@@ -58,13 +65,11 @@ public class TarjetaService {
 					.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
 				throw new BadRequestAlertException("No te pertenece ese cliente", "tarjeta", "prohibido");
 		}
-		if (
-		tarjetaAddDTO.getVencimiento() == null || tarjetaAddDTO.getNumero() == null
+		if (tarjetaAddDTO.getVencimiento() == null || tarjetaAddDTO.getNumero() == null
 				|| tarjetaAddDTO.getSeguridad() == null || tarjetaAddDTO.getCliente_id() == null)
 			throw new BadRequestAlertException("faltan parametros", "tarjeta", "missing parameters");
 
-		
-		CardType type = CardType.detect(Long.toString(tarjetaAddDTO.getNumero())); 
+		CardType type = CardType.detect(Long.toString(tarjetaAddDTO.getNumero()));
 
 		String ult4 = String.valueOf(tarjetaAddDTO.getNumero())
 				.substring(String.valueOf(tarjetaAddDTO.getNumero()).length() - 4);
@@ -73,7 +78,6 @@ public class TarjetaService {
 		Tarjeta tarjeta = new Tarjeta();
 		tarjeta.setTipo(type);
 		tarjeta.setToken(token);
-		tarjeta.setAlta(tarjetaAddDTO.getAlta());
 		tarjeta.setUltDigitos(Integer.valueOf(ult4));
 		tarjeta.setCliente(clienteRepository.findById(tarjetaAddDTO.getCliente_id()).get());
 		Tarjeta result = tarjetaRepository.save(tarjeta);
@@ -83,17 +87,34 @@ public class TarjetaService {
 				.body(result);
 	}
 
-	public ResponseEntity<Object> editTarjeta(Long id) throws IOException {
+	public ResponseEntity<Object> editTarjeta(String token) throws IOException {
 		if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
-			if (tarjetaRepository.findById(id).get().getCliente().getUser().getId() != userRepository
+			if (tarjetaRepository.findByTokenOpt(token).get().getCliente().getUser().getId() != userRepository
 					.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
 				throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
-		Optional<Tarjeta> found = tarjetaRepository.findById(id);
+		Optional<Tarjeta> found = tarjetaRepository.findByTokenOpt(token);
 		if (found.isPresent()) {
 			Tarjeta tarjeta = found.get();
-			tarjeta.setAlta(true);
-			return new ResponseEntity<>("Habilitado con exito", HttpStatus.OK);
+			// tarjeta.setAlta(false);
+			RestTemplate restTemplate = new RestTemplate();
 
+			MultiValueMap<String, Object> headers = new LinkedMultiValueMap<String, Object>();
+			headers.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+			headers.add("Authorization", "Bearer "+PostUtil.getJwt_tarjeta());
+//
+			HttpEntity request = new HttpEntity("", headers);
+//
+			final ResponseEntity<String> exchange = restTemplate.exchange(
+					"http://127.0.0.1:8081/api/tarjeta/" + tarjeta.getToken(), HttpMethod.PUT, request,
+					String.class);
+			String status = exchange.getStatusCode().toString();
+			System.out.println(status);
+			if (!status.equals("200 OK")) {
+				return new ResponseEntity<>("No se pudo activar", HttpStatus.NOT_FOUND);
+			} else {
+				System.out.println("PASS:Update successfully executed. Status CodeL:" + status);
+			}
+			return new ResponseEntity<>("Acticado con exito", HttpStatus.OK);
 		} else {
 			throw new BadRequestAlertException("id no encontrada", "tarjeta", "bad id");
 		}
@@ -149,23 +170,38 @@ public class TarjetaService {
 
 	}
 
-	public ResponseEntity<Object> deleteById(Long id) throws IOException {
+	public ResponseEntity<Object> deleteById(String token) throws IOException {
 		if (!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN))
-			if (tarjetaRepository.findById(id).get().getCliente().getUser().getId() != userRepository
+			if (tarjetaRepository.findByTokenOpt(token).get().getCliente().getUser().getId() != userRepository
 					.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) // seguridad
 				throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "forbidden");
-		Optional<Tarjeta> found = tarjetaRepository.findById(id);
+		Optional<Tarjeta> found = tarjetaRepository.findByTokenOpt(token);
 		if (found.isPresent()) {
 			Tarjeta tarjeta = found.get();
-			tarjeta.setAlta(false);
-			Tarjeta result = tarjetaRepository.save(tarjeta);
-			return new ResponseEntity<>("Eliminado con exito", HttpStatus.OK);
+			// tarjeta.setAlta(false);
+			RestTemplate restTemplate = new RestTemplate();
 
+			MultiValueMap<String, Object> headers = new LinkedMultiValueMap<String, Object>();
+			headers.add("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+			headers.add("Authorization", "Bearer "+PostUtil.getJwt_tarjeta());
+//
+			HttpEntity request = new HttpEntity("", headers);
+//
+			final ResponseEntity<String> exchange = restTemplate.exchange(
+					"http://127.0.0.1:8081/api/tarjeta/" + tarjeta.getToken(), HttpMethod.DELETE, request,
+					String.class);
+			String status = exchange.getStatusCode().toString();
+			System.out.println(status);
+			if (!status.equals("200 OK")) {
+				return new ResponseEntity<>("No se pudo eliminar", HttpStatus.NOT_FOUND);
+			} else {
+				System.out.println("PASS: Delete successfully executed. Status CodeL:" + status);
+			}
+			return new ResponseEntity<>("Eliminado con exito", HttpStatus.OK);
 		} else {
 			throw new BadRequestAlertException("id no encontrada", "tarjeta", "bad id");
 		}
 
 	}
 
-	
 }

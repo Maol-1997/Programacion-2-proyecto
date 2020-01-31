@@ -11,10 +11,12 @@ import ar.edu.um.programacion2.principal.security.AuthoritiesConstants;
 import ar.edu.um.programacion2.principal.security.SecurityUtils;
 import ar.edu.um.programacion2.principal.service.dto.CompraDTO;
 import ar.edu.um.programacion2.principal.service.dto.LogDTO;
+import ar.edu.um.programacion2.principal.service.dto.MessageDTO;
 import ar.edu.um.programacion2.principal.service.dto.TarjetaDTO;
 import ar.edu.um.programacion2.principal.service.util.PostUtil;
 import ar.edu.um.programacion2.principal.web.rest.errors.BadRequestAlertException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.ribbon.proxy.annotation.Http;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
@@ -66,9 +68,9 @@ public class CompraService {
 						.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get().getId()) {
 					throw new BadRequestAlertException("No te pertenece ese cliente", "tarjeta", "prohibido");
 				}
-			}
-			if (tarjeta.get().isAlta() != true) {
-				throw new BadRequestAlertException("La Tarjeta esta dada de baja", "tarjeta", "prohibido");
+				if (!tarjeta.get().getCliente().getActivo()) {
+					throw new BadRequestAlertException("El cliente esta inactivo", "cliente", "prohibido");
+				}
 			}
 		}
 
@@ -80,14 +82,19 @@ public class CompraService {
 		compra.setPrecio(compraDTO.getPrecio());
 		compra.setUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get()).get());
 		compra.setTarjeta(tarjetaRepository.findByToken(compraDTO.getToken()));
+		ObjectMapper objectMapper = new ObjectMapper();
 		HttpResponse verificacionTarjeta;
 		HttpResponse verificacionMonto;
+		MessageDTO messageTarjeta;
+		MessageDTO messageMonto;
 		if ((verificacionTarjeta = PostUtil.sendPost(tarjetaDTO.toString(),
 				"http://127.0.0.1:8081/api/tarjeta/tarjeta")).getStatusLine().getStatusCode() != 201) {
+			messageTarjeta = objectMapper.readValue(verificacionTarjeta.getEntity().getContent(), MessageDTO.class);
+			// System.out.println(messageTarjeta.getMensaje());
+			// System.out.println(EntityUtils.getContentCharSet(verificacionTarjeta));
 			compra.setValido(false);
 			Compra result = compraRepository.save(compra);
-			LogDTO logDTO = new LogDTO("Verificar Tarjeta",
-					EntityUtils.toString(verificacionTarjeta.getEntity(), "UTF-8"), "FALLO", result.getId());
+			LogDTO logDTO = new LogDTO("Verificar Tarjeta", messageTarjeta.getMensaje(), "FALLO", result.getId());
 			HttpResponse responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("Accept", "*/*");
@@ -95,10 +102,10 @@ public class CompraService {
 		} else if ((verificacionMonto = PostUtil.sendPost(tarjetaDTO.toString(),
 				"http://127.0.0.1:8081/api/tarjeta/comprar")).getStatusLine().getStatusCode() != 201
 				&& compraDTO.getPrecio() >= 5000) {
+			messageMonto = objectMapper.readValue(verificacionMonto.getEntity().getContent(), MessageDTO.class);
 			compra.setValido(false);
 			Compra result = compraRepository.save(compra);
-			LogDTO logDTO = new LogDTO("Verificar Monto", EntityUtils.toString(verificacionMonto.getEntity(), "UTF-8"),
-					"FALLO", result.getId());
+			LogDTO logDTO = new LogDTO("Verificar Monto", messageMonto.getMensaje(), "FALLO", result.getId());
 			System.out.println(logDTO);
 			HttpResponse responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
 			System.out.println(responseLog);
@@ -108,12 +115,12 @@ public class CompraService {
 		} else {
 			System.out.println("Entro a compra valida");
 			compra.setValido(true);
+			messageTarjeta = objectMapper.readValue(verificacionTarjeta.getEntity().getContent(), MessageDTO.class);
+			messageMonto = objectMapper.readValue(verificacionMonto.getEntity().getContent(), MessageDTO.class);
 			Compra result = compraRepository.save(compra);
-			LogDTO logDTO = new LogDTO("Verificar Tarjeta",
-					EntityUtils.toString(verificacionTarjeta.getEntity(), "UTF" + "-8"), "OK", result.getId());
+			LogDTO logDTO = new LogDTO("Verificar Tarjeta", messageTarjeta.getMensaje(), "OK", result.getId());
 			HttpResponse responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
-			logDTO = new LogDTO("Verificar Monto", EntityUtils.toString(verificacionMonto.getEntity(), "UTF" + "-8"),
-					"OK", result.getId());
+			logDTO = new LogDTO("Verificar Monto", messageMonto.getMensaje(), "OK", result.getId());
 			System.out.println(logDTO);
 			responseLog = PostUtil.sendPost(logDTO.toString(), "http://127.0.0.1:8082/api/log/");
 			logDTO = new LogDTO("Confirmacion Venta", "La venta se realizo con exito", "OK", result.getId());

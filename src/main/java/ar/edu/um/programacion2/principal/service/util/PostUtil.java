@@ -33,7 +33,8 @@ public class PostUtil {
 	}
 
 
-	public static String getJwt_tarjeta() {
+	public static String getJwt_tarjeta() throws IOException {
+		getJwt(true);
 		return jwt_tarjeta;
 	}
 

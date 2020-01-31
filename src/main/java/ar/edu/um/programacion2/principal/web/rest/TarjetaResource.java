@@ -82,11 +82,11 @@ public class TarjetaResource {
 	 * @throws URISyntaxException if the Location URI syntax is incorrect.
 	 * @throws IOException
 	 */
-	@PutMapping("/tarjeta/{id}")
-	public ResponseEntity<Object> updateTarjeta(@PathVariable Long id)
+	@PutMapping("/tarjeta/{token}")
+	public ResponseEntity<Object> updateTarjeta(@PathVariable String token)
 			throws URISyntaxException, IOException {
-		log.debug("REST request to update Tarjeta : {}", id);
-		return tarjetaService.editTarjeta(id);
+		log.debug("REST request to update Tarjeta : {}", token);
+		return tarjetaService.editTarjeta(token);
 	}
 
 	/**
@@ -130,9 +130,9 @@ public class TarjetaResource {
 	 * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
 	 * @throws IOException
 	 */
-	@DeleteMapping("/tarjeta/{id}")
-	public ResponseEntity<Object> deleteTarjeta(@PathVariable Long id) throws IOException {
-		log.debug("REST request to delete Tarjeta : {}", id);
-		return tarjetaService.deleteById(id);
+	@DeleteMapping("/tarjeta/{token}")
+	public ResponseEntity<Object> deleteTarjeta(@PathVariable String token) throws IOException {
+		log.debug("REST request to delete Tarjeta : {}", token);
+		return tarjetaService.deleteById(token);
 	}
 }

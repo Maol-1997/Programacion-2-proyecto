@@ -36,9 +36,6 @@ public class Tarjeta implements Serializable {
     @Column(name = "token", nullable = false)
     private String token;
 
-    @NotNull
-    @Column(name = "alta", nullable = false)
-    private Boolean alta;
 
     @ManyToOne
     @JsonIgnoreProperties("tarjetas")
@@ -79,18 +76,7 @@ public class Tarjeta implements Serializable {
         this.token = token;
     }
 
-    public Boolean isAlta() {
-        return alta;
-    }
 
-    public Tarjeta alta(Boolean alta) {
-        this.alta = alta;
-        return this;
-    }
-
-    public void setAlta(Boolean alta) {
-        this.alta = alta;
-    }
 
     public Cliente getCliente() {
         return cliente;
@@ -125,9 +111,7 @@ public class Tarjeta implements Serializable {
 		this.tipo = tipo;
 	}
 
-	public Boolean getAlta() {
-		return alta;
-	}
+
 
 	@Override
     public int hashCode() {
@@ -141,7 +125,6 @@ public class Tarjeta implements Serializable {
             "tipo=" + getTipo() +
             ", ultDigitos=" + getUltDigitos() +
             ", token='" + getToken() + "'" +
-            ", alta='" + isAlta() + "'" +
             "}";
     }
 }
